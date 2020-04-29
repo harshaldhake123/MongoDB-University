@@ -69,16 +69,16 @@
     vagrant@m103:~$ rm -rf mongodb-27000.sock
     vagrant@m103:~$ sudo chown -R vagrant:vagrant /var/mongodb/db/
 
->storage:   
->&ensp;dbPath: "/var/mongodb/db/"   
->systemLog:   
->&ensp;path: "/data/logs/mongod.log"   
->&ensp;destination: "file"    
+> storage:   
+> &ensp;dbPath: "/var/mongodb/db/"   
+> systemLog:   
+> &ensp;path: "/data/logs/mongod.log"   
+> &ensp;destination: "file"    
 > net:   
 > &ensp;bindIp : "127.0.0.1,192.168.103.100"   
 > &ensp;port: 27000    
 > security:  
->&ensp;authorization: enabled    
+> &ensp;authorization: enabled    
 > processManagement:   
 > &ensp;fork : true
 
@@ -110,9 +110,9 @@
 > &ensp;destination: "file"   
 > &ensp;logAppend: true
 > net:   
->     &ensp;bindIp : "127.0.0.1,192.168.103.100"   
->     &ensp;port: 27000 
->  security:  
+> &ensp;bindIp : "127.0.0.1,192.168.103.100"   
+> &ensp;port: 27000 
+> security:  
 > &ensp;authorization: enabled 
 > processManagement:   
 > &ensp;fork : true
