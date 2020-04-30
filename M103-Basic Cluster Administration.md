@@ -2,12 +2,28 @@
 
 # Table of Contents:
 
- - Chapter 0: Introduction & Setup 
- - Chapter 1: The Mongod 
- - Chapter 2:Replication 
- -  Chapter 3: Sharding 
- - Final Exam
-
+ [M103 - Basic Cluster Administration](#m103---basic-cluster-administration)
+  * [Chapter 0:  Introduction & Setup](#chapter-0---introduction---setup)
+  * [Chapter 1: The Mongod](#chapter-1--the-mongod)
+    + [Lab - Launching Mongod :](#lab---launching-mongod--)
+    + [Lab - Configuration File](#lab---configuration-file)
+    + [Lab - Change the Default DB Path](#lab---change-the-default-db-path)
+    + [Lab - Logging to a Different Facility](#lab---logging-to-a-different-facility)
+    + [Lab - Creating First Application User](#lab---creating-first-application-user)
+    + [Lab - Importing a Dataset](#lab---importing-a-dataset)
+   
+  * [Chapter 2: Replication](#chapter-2--replication)
+    + [Lab - Initiate a Replica Set Locally](#lab---initiate-a-replica-set-locally)
+    + [Lab - Remove and Re-Add a Node](#lab---remove-and-re-add-a-node)
+    + [Lab - Writes with Failovers](#lab---writes-with-failovers)
+  
+  * [Chapter 3: Sharding](#chapter-3--sharding)
+  * [Final Exam](#final-exam)
+    + [Final: Question 1](#final--question-1)
+    + [Final: Question 2](#final--question-2)
+    + [Final: Question 3](#final--question-3)
+    + [Final: Question 4](#final--question-4)
+    + [Final: Question 5](#final--question-5)
 
 **Working directory:**
 
@@ -64,12 +80,13 @@
     vagrant@m103:~$ mongod -f /data/mongod.conf
 
 ### Lab - Configuration File
---------------------------
+
 
     vagrant@m103:~$ validate_lab_configuration_file
 
 > *OutputValidationKey*
 --------------------------------------------------------------------------------------------------------
+### Lab - Change the Default DB Path
 
     vagrant@m103:~$ sudo mkdir -p /var/mongodb/db/
     vagrant@m103:~$ mkdir -p /var/mongodb/db/
@@ -101,14 +118,14 @@
       })
     '
 
-### Lab - Change the Default DB Path
+
 ---------------------------------
 
     vagrant@m103:~$ validate_lab_change_dbpath
 
 > *OutputValidationKey*
 --------------------------------------------------------------
-
+### Lab - Logging to a Different Facility
     vagrant@m103:~$ mongo admin --port 27000 -u m103-admin -p m103-pass --eval 'db.shutdownServer()'
 
 > 
@@ -129,14 +146,14 @@
 > &ensp;   slowOpThresholdMs: 50
 
 
-### Lab - Logging to a Different Facility
+
 ---------------------------------------
 
     vagrant@m103:~$ validate_lab_different_logpath
 
 > *OutputValidationKey*
 --------------------------------------------------------------
-
+### Lab - Creating First Application User
     vagrant@m103:~$ mongo admin --host localhost:27000 -u m103-admin -p m103-pass --eval '
       db.createUser({
         user: "m103-application-user",
@@ -147,14 +164,14 @@
       })
     '
 
-### Lab - Creating First Application User
+
 --------------------------------------
 
     vagrant@m103:~$ validate_lab_first_application_user
 
 > *OutputValidationKey*
 -------------------------------------------------------------
-
+### Lab - Importing a Dataset
     vagrant@m103:~$ mongoimport --port 27000 -u m103-application-user -p m103-application-pass --authenticationDatabase admin -d applicationData -c products /dataset/products.json
 
 > 2019-01-20T14:59:08.225+0000    connected to: localhost:27000
@@ -175,7 +192,7 @@
 > 2019-01-20T14:59:26.472+0000    imported 516784 documents
 
 
-### Lab - Importing a Dataset
+
 --------------------------
 
     validate_lab_import_dataset
@@ -249,12 +266,57 @@
 
 > *OutputValidationKey*
 
+--------------
+### Lab - Remove and Re-Add a Node  
+
+
+    vagrant@m103:~$mongo --host "m103-repl/192.168.103.100:27001" -u "m103-admin" -p "m103-pass" --authenticationDatabase "admin"  
+    MongoDB Enterprise m103-repl:PRIMARY> rs.stepDown()  
+    MongoDB Enterprise m103-repl:SECONDARY> rs.status()  
+    MongoDB Enterprise m103-repl:PRIMARY>rs.remove("192.168.103.100:27001")  
+    MongoDB Enterprise m103-repl:PRIMARY>rs.status()  
+    MongoDB Enterprise m103-repl:PRIMARY>rs.add("m103:27001")  
+    MongoDB Enterprise m103-repl:PRIMARY>rs.status()  
+
+---------------------------
+    vagrant@m103:~$ validate_lab_remove_readd_node  
+
+> *OutputValidationKey*
+--------------
+### Lab - Writes with Failovers
+
+**Problem: Evaluate the effect of using a write concern with a replica set where one node has failed.
+Consider a 3-node replica set with only 2 healthy nodes, that receives the following  insert()  operation:**
+
+    use payroll
+    db.employees.insert(
+      { "name": "Aditya", "salary_USD": 50000 },
+      { "writeConcern": { "w": 3, "wtimeout": 1000 } }
+    )
+
+
+**Which of the following is true about this write operation?**
+
+*Correct:*
+1.  The unhealthy node will receive the new document when it is brought back online.
+
+2. If a  writeConcernError  occurs, the document is still written to the healthy nodes.
+
+
+*Incorrect:*
+1. w: "majority"  would also cause this write operation to return with an error.
+
+2. The write operation will always return with an error, even if  wtimeout  is not specified.
+
+--------------
+### Lab
+
 ## Chapter 3: Sharding
 
 ## Final Exam
 
 ### Final: Question 1  
-------------------  
+
 **Problem: Which of the following are valid command line instructions to start a mongod? You may assume that all specified files already exist.**  
   
 *Correct:*  
@@ -568,6 +630,8 @@
 3. It serves as a hidden secondary available to use for non-critical analysis operations  
   
 -------------------------------------------------------------------------------------------------------------
+
+
 
 
 
