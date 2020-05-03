@@ -1,34 +1,31 @@
 # M103 - Basic Cluster Administration
 
 # Table of Contents:
-
-- [M103 - Basic Cluster Administration](#m103---basic-cluster-administration)
-- [Table of Contents:](#table-of-contents-)
-  * [Chapter 0:  Introduction & Setup](#chapter-0---introduction---setup)
-  * [Chapter 1: The Mongod](#chapter-1--the-mongod)
-    + [Lab - Launching Mongod](#lab---launching-mongod)
-    + [Lab - Configuration File](#lab---configuration-file)
-    + [Lab - Change the Default DB Path](#lab---change-the-default-db-path)
-    + [Lab - Logging to a Different Facility](#lab---logging-to-a-different-facility)
-    + [Lab - Creating First Application User](#lab---creating-first-application-user)
-    + [Lab - Importing a Dataset](#lab---importing-a-dataset)
-  * [Chapter 2: Replication](#chapter-2--replication)
-    + [Lab - Initiate a Replica Set Locally](#lab---initiate-a-replica-set-locally)
-    + [Lab - Remove and Re-Add a Node](#lab---remove-and-re-add-a-node)
-    + [Lab - Writes with Failovers](#lab---writes-with-failovers)
-    + [Lab - Read Preferences](#lab---read-preferences)
-  * [Chapter 3: Sharding](#chapter-3--sharding)
-    + [Lab - Configure a Sharded Cluster](#lab---configure-a-sharded-cluster)
-    + [Lab - Shard a Collection](#lab---shard-a-collection)
-    + [Lab - Documents in Chunks](#lab---documents-in-chunks)
-    + [Lab: Detect Scatter Gather Queries](#lab--detect-scatter-gather-queries)
-  * [Final Exam](#final-exam)
-    + [Final: Question 1](#final--question-1)
-    + [Final: Question 2](#final--question-2)
-    + [Final: Question 3](#final--question-3)
-    + [Final: Question 4](#final--question-4)
-    + [Final: Question 5](#final--question-5)
-
+- [Chapter 0:  Introduction & Setup](#chapter-0---introduction---setup)
+- [Chapter 1: The Mongod](#chapter-1--the-mongod)
+  * [Lab - Launching Mongod](#lab---launching-mongod)
+  * [Lab - Configuration File](#lab---configuration-file)
+  * [Lab - Change the Default DB Path](#lab---change-the-default-db-path)
+  * [Lab - Logging to a Different Facility](#lab---logging-to-a-different-facility)
+  * [Lab - Creating First Application User](#lab---creating-first-application-user)
+  * [Lab - Importing a Dataset](#lab---importing-a-dataset)
+- [Chapter 2: Replication](#chapter-2--replication)
+  * [Lab - Initiate a Replica Set Locally](#lab---initiate-a-replica-set-locally)
+  * [Lab - Remove and Re-Add a Node](#lab---remove-and-re-add-a-node)
+  * [Lab - Writes with Failovers](#lab---writes-with-failovers)
+  * [Lab - Read Preferences](#lab---read-preferences)
+- [Chapter 3: Sharding](#chapter-3--sharding)
+  * [Lab - Configure a Sharded Cluster](#lab---configure-a-sharded-cluster)
+  * [Lab - Shard a Collection](#lab---shard-a-collection)
+  * [Lab - Documents in Chunks](#lab---documents-in-chunks)
+  * [Lab: Detect Scatter Gather Queries](#lab--detect-scatter-gather-queries)
+- [Final Exam](#final-exam)
+  * [Final: Question 1](#final--question-1)
+  * [Final: Question 2](#final--question-2)
+  * [Final: Question 3](#final--question-3)
+  * [Final: Question 4](#final--question-4)
+  * [Final: Question 5](#final--question-5)
+  * [Final Question  6](#final-question--6)
 
 **Working directory:**
 
@@ -902,24 +899,20 @@ Append the below configuration options to the replicaset config files:
 2. It servers as a reference to perform analytics on how data is changing over time  
 3. It serves as a hidden secondary available to use for non-critical analysis operations  
   
--------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------
+### Final Question  6
+**Problem: Given the following shard key:**
 
+    { "country": 1, "_id": 1 }
 
+**Which of the following queries will be routed (targeted)? Remember that queries may be routed to more than one shard.
+Check all answers that apply:**
+*Correct:*
+1. db.customers.find({"country": "Norway", "_id": 54})
+2. db.customers.find({"_id": 914, "country": "Sweden"})
+3. db.customers.find({"country": { $gte: "Portugal", $lte: "Spain" }})
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+*Incorrect:*
+1. db.customers.find({"_id": 455})
 
 
