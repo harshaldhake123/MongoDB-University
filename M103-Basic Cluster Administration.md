@@ -1,6 +1,7 @@
 # M103 - Basic Cluster Administration
 
 # Table of Contents:
+
 - [M103 - Basic Cluster Administration](#m103---basic-cluster-administration)
 - [Table of Contents:](#table-of-contents-)
   * [Chapter 0:  Introduction & Setup](#chapter-0---introduction---setup)
@@ -19,6 +20,8 @@
   * [Chapter 3: Sharding](#chapter-3--sharding)
     + [Lab - Configure a Sharded Cluster](#lab---configure-a-sharded-cluster)
     + [Lab - Shard a Collection](#lab---shard-a-collection)
+    + [Lab - Documents in Chunks](#lab---documents-in-chunks)
+    + [Lab: Detect Scatter Gather Queries](#lab--detect-scatter-gather-queries)
   * [Final Exam](#final-exam)
     + [Final: Question 1](#final--question-1)
     + [Final: Question 2](#final--question-2)
@@ -543,6 +546,46 @@ Append the below configuration options to the replicaset config files:
 
 > *OutputValidationKey*
 
+### Lab - Documents in Chunks
+**Problem: Consider the following document:**
+
+    {
+      "_id" : ObjectId("573f7197f29313caab89b3a4"),
+      "sku" : 20005012,
+      "name" : "Complete Hit Singles A's & B's - CD",
+      "type" : "Music",
+      "regularPrice" : 14.99,
+      "salePrice" : 14.99,
+      "shippingWeight" : "0.25"
+    }
+**Which of the following chunks would contain this document?** 
+*Correct:*
+
+    {
+      "_id" : "m103.products-sku_20000000",
+      "shard" : "shard2",
+      "min" : {
+        "sku" : 20000000
+      },
+      "max" : {
+        "sku" : 25000000
+      }
+    }
+
+###  Lab: Detect Scatter Gather Queries
+
+**Problem: Which of the following is  required  in order for a query to be targeted to a subset of shards?**
+**Check all answers that apply:**
+
+*Correct:* 
+1. The query uses the shard key
+2. An index exists on the shard key
+
+*Incorrect:*
+1. The shards are running on same data center
+
+
+
 ## Final Exam
 
 ### Final: Question 1  
@@ -860,6 +903,7 @@ Append the below configuration options to the replicaset config files:
 3. It serves as a hidden secondary available to use for non-critical analysis operations  
   
 -------------------------------------------------------------------------------------------------------------
+
 
 
 
