@@ -1,29 +1,31 @@
 # M103 - Basic Cluster Administration
 
 # Table of Contents:
-
- [M103 - Basic Cluster Administration](#m103---basic-cluster-administration)
+- [M103 - Basic Cluster Administration](#m103---basic-cluster-administration)
+- [Table of Contents:](#table-of-contents-)
   * [Chapter 0:  Introduction & Setup](#chapter-0---introduction---setup)
   * [Chapter 1: The Mongod](#chapter-1--the-mongod)
-    + [Lab - Launching Mongod :](#lab---launching-mongod--)
+    + [Lab - Launching Mongod](#lab---launching-mongod)
     + [Lab - Configuration File](#lab---configuration-file)
     + [Lab - Change the Default DB Path](#lab---change-the-default-db-path)
     + [Lab - Logging to a Different Facility](#lab---logging-to-a-different-facility)
     + [Lab - Creating First Application User](#lab---creating-first-application-user)
     + [Lab - Importing a Dataset](#lab---importing-a-dataset)
-   
   * [Chapter 2: Replication](#chapter-2--replication)
     + [Lab - Initiate a Replica Set Locally](#lab---initiate-a-replica-set-locally)
     + [Lab - Remove and Re-Add a Node](#lab---remove-and-re-add-a-node)
     + [Lab - Writes with Failovers](#lab---writes-with-failovers)
-  
+    + [Lab - Read Preferences](#lab---read-preferences)
   * [Chapter 3: Sharding](#chapter-3--sharding)
+    + [Lab - Configure a Sharded Cluster](#lab---configure-a-sharded-cluster)
+    + [Lab - Shard a Collection](#lab---shard-a-collection)
   * [Final Exam](#final-exam)
     + [Final: Question 1](#final--question-1)
     + [Final: Question 2](#final--question-2)
     + [Final: Question 3](#final--question-3)
     + [Final: Question 4](#final--question-4)
     + [Final: Question 5](#final--question-5)
+
 
 **Working directory:**
 
@@ -32,17 +34,17 @@
 ## Chapter 0:  Introduction & Setup
 
 
-    vagrant@m103:~$ vagrant ssh
-    vagrant@m103:~$ validate_box
+    $ vagrant ssh
+    $ validate_box
 
 > *OutputValidationKey*
 
 
 ## Chapter 1: The Mongod
 
-    vagrant@m103:~$ mongod --dbpath /data/db/ --port 27000 --bind_ip "127.0.0.1,192.168.103.100" --auth
+    $ mongod --dbpath /data/db/ --port 27000 --bind_ip "127.0.0.1,192.168.103.100" --auth
     
-    vagrant@m103:~$ mongo admin --host localhost:27000 --eval '
+    $ mongo admin --host localhost:27000 --eval '
       db.createUser({
         user: "m103-admin",
         pwd: "m103-pass",
@@ -52,16 +54,16 @@
       })
     '
 
-### Lab - Launching Mongod :
+### Lab - Launching Mongod
 
-    vagrant@m103:~$ validate_lab_launch_mongod
+    $ validate_lab_launch_mongod
 
 > *OutputValidationKey*
 
 -----------------------------------------------------------------------------------------------------------
 
-    vagrant@m103:~$ mkdir /data/logs
-    vagrant@m103:~$ vi /data/mongod.conf
+    $ mkdir /data/logs
+    $ vi /data/mongod.conf
 
 > storage:   
 > &ensp;dbPath: "/data/db" 
@@ -77,23 +79,23 @@
 > &ensp;fork : true
 
   
-    vagrant@m103:~$ mongod -f /data/mongod.conf
+    $ mongod -f /data/mongod.conf
 
 ### Lab - Configuration File
 
 
-    vagrant@m103:~$ validate_lab_configuration_file
+    $ validate_lab_configuration_file
 
 > *OutputValidationKey*
 --------------------------------------------------------------------------------------------------------
 ### Lab - Change the Default DB Path
 
-    vagrant@m103:~$ sudo mkdir -p /var/mongodb/db/
-    vagrant@m103:~$ mkdir -p /var/mongodb/db/
-    vagrant@m103:~$ sudo kill -9 2400
-    vagrant@m103:~$ mongod -f /data/mongod.conf
-    vagrant@m103:~$ rm -rf mongodb-27000.sock
-    vagrant@m103:~$ sudo chown -R vagrant:vagrant /var/mongodb/db/
+    $ sudo mkdir -p /var/mongodb/db/
+    $ mkdir -p /var/mongodb/db/
+    $ sudo kill -9 2400
+    $ mongod -f /data/mongod.conf
+    $ rm -rf mongodb-27000.sock
+    $ sudo chown -R vagrant:vagrant /var/mongodb/db/
 
 > storage:   
 > &ensp;dbPath: "/var/mongodb/db/"   
@@ -108,7 +110,7 @@
 > processManagement:   
 > &ensp;fork : true
 
-    vagrant@m103:~$ mongo admin --host localhost:27000 --eval '
+    $ mongo admin --host localhost:27000 --eval '
       db.createUser({
         user: "m103-admin",
         pwd: "m103-pass",
@@ -121,12 +123,12 @@
 
 ---------------------------------
 
-    vagrant@m103:~$ validate_lab_change_dbpath
+    $ validate_lab_change_dbpath
 
 > *OutputValidationKey*
 --------------------------------------------------------------
 ### Lab - Logging to a Different Facility
-    vagrant@m103:~$ mongo admin --port 27000 -u m103-admin -p m103-pass --eval 'db.shutdownServer()'
+    $ mongo admin --port 27000 -u m103-admin -p m103-pass --eval 'db.shutdownServer()'
 
 > 
 > storage:   
@@ -149,12 +151,12 @@
 
 ---------------------------------------
 
-    vagrant@m103:~$ validate_lab_different_logpath
+    $ validate_lab_different_logpath
 
 > *OutputValidationKey*
 --------------------------------------------------------------
 ### Lab - Creating First Application User
-    vagrant@m103:~$ mongo admin --host localhost:27000 -u m103-admin -p m103-pass --eval '
+    $ mongo admin --host localhost:27000 -u m103-admin -p m103-pass --eval '
       db.createUser({
         user: "m103-application-user",
         pwd: "m103-application-pass",
@@ -167,12 +169,12 @@
 
 --------------------------------------
 
-    vagrant@m103:~$ validate_lab_first_application_user
+    $ validate_lab_first_application_user
 
 > *OutputValidationKey*
 -------------------------------------------------------------
 ### Lab - Importing a Dataset
-    vagrant@m103:~$ mongoimport --port 27000 -u m103-application-user -p m103-application-pass --authenticationDatabase admin -d applicationData -c products /dataset/products.json
+    $ mongoimport --port 27000 -u m103-application-user -p m103-application-pass --authenticationDatabase admin -d applicationData -c products /dataset/products.json
 
 > 2019-01-20T14:59:08.225+0000    connected to: localhost:27000
 > 2019-01-20T14:59:11.212+0000    [###.....................]
@@ -206,7 +208,7 @@
 ### Lab - Initiate a Replica Set Locally
 ----------------------------
 
-    vagrant@m103:~$ sudo -i
+    $ sudo -i
     root@m103:~# cd /etc/
     root@m103:/etc# nano mongod-repl-1.conf
     root@m103:/etc# cp mongod-repl-1.conf mongod-repl-2.conf
@@ -241,11 +243,11 @@
 
     root@m103:/etc# mkdir /var/mongodb/db/{1,2,3}
 
-    vagrant@m103:~$ mongod -f mongod-repl-1.conf  
-    vagrant@m103:~$ mongod -f mongod-repl-2.conf  
-    vagrant@m103:~$ mongod -f mongod-repl-3.conf  
+    $ mongod -f /etc/mongod-repl-1.conf  
+    $ mongod -f /etc/mongod-repl-2.conf  
+    $ mongod -f /etc/mongod-repl-3.conf  
       
-    vagrant@m103:~$ mongo --port 27001  
+    $ mongo --port 27001  
     MongoDB Enterprise m103-repl:PRIMARY> rs.initiate()  
     MongoDB Enterprise m103-repl:PRIMARY> use admin  
     MongoDB Enterprise m103-repl:PRIMARY> db.createUser({  
@@ -254,7 +256,7 @@
     								roles: [{role: "root", db: "admin"}]
     								})
     MongoDB Enterprise m103-repl:PRIMARY> exit  
-    vagrant@m103:~$ mongo --host "m103-repl/192.168.103.100:27001" -u "m103-admin" -p "m103-pass" --authenticationDatabase "admin"  
+    $ mongo --host "m103-repl/192.168.103.100:27001" -u "m103-admin" -p "m103-pass" --authenticationDatabase "admin"  
     MongoDB Enterprise m103-repl:PRIMARY> rs.status()  
     MongoDB Enterprise m103-repl:PRIMARY> rs.add("m103:27002")  
     MongoDB Enterprise m103-repl:PRIMARY> rs.add("m103:27003")  
@@ -262,7 +264,7 @@
   
 -------------------------------------  
 
-    vagrant@m103:~$ validate_lab_initialize_local_replica_set  
+    $ validate_lab_initialize_local_replica_set  
 
 > *OutputValidationKey*
 
@@ -270,7 +272,7 @@
 ### Lab - Remove and Re-Add a Node  
 
 
-    vagrant@m103:~$mongo --host "m103-repl/192.168.103.100:27001" -u "m103-admin" -p "m103-pass" --authenticationDatabase "admin"  
+    $mongo --host "m103-repl/192.168.103.100:27001" -u "m103-admin" -p "m103-pass" --authenticationDatabase "admin"  
     MongoDB Enterprise m103-repl:PRIMARY> rs.stepDown()  
     MongoDB Enterprise m103-repl:SECONDARY> rs.status()  
     MongoDB Enterprise m103-repl:PRIMARY>rs.remove("192.168.103.100:27001")  
@@ -279,7 +281,7 @@
     MongoDB Enterprise m103-repl:PRIMARY>rs.status()  
 
 ---------------------------
-    vagrant@m103:~$ validate_lab_remove_readd_node  
+    $ validate_lab_remove_readd_node  
 
 > *OutputValidationKey*
 --------------
@@ -309,9 +311,237 @@ Consider a 3-node replica set with only 2 healthy nodes, that receives the follo
 2. The write operation will always return with an error, even if  wtimeout  is not specified.
 
 --------------
-### Lab
+### Lab - Read Preferences
 
+**Problem: Consider a 3-node replica set that experiences a network outage.
+Two of the three nodes were unreachable during the outage, leaving one node remaining.
+Which of these  readPreferences  will allow you to read data from this node?**
+
+*Correct*
+1. nearest
+
+2. secondaryPreferred
+
+3. primaryPreferred
+
+4. secondary
+
+*Incorrect*
+1. primary
+-------------
 ## Chapter 3: Sharding
+### Lab - Configure a Sharded Cluster
+**1. Bring up the config server replica set (CSRS)**
+  
+
+    $ csrs_1.conf  
+    $ vi csrs_1.conf  
+
+  
+**primary** config server:
+> sharding:   
+> &ensp;clusterRole: configsvr   
+> replication:  
+> &ensp;replSetName: m103-csrs   
+> security:
+>    &ensp;keyFile: /var/mongodb/pki/m103-keyfile   
+>    net:
+>       &ensp;bindIp: localhost,192.168.103.100   
+>       &ensp;port: 26001   
+> systemLog:  
+> &ensp;destination: file   
+> &ensp;path: /var/mongodb/db/csrs1/mongod.log
+> &ensp;logAppend: true   
+> processManagement:
+>    &ensp;fork: true  
+> storage:
+>    &ensp;dbPath: /var/mongodb/db/csrs1
+
+  
+
+    $ cp csrs_1.conf csrs_2.conf  
+    $ cp csrs_1.conf csrs_3.conf  
+    $ vi csrs_2.conf  
+    $ vi csrs_3.conf  
+    $ mkdir /var/mongodb/db/{csrs1,csrs2,csrs3}  
+      
+    $ mongod -f csrs_1.conf  
+    $ mongod -f csrs_2.conf  
+    $ mongod -f csrs_3.conf  
+      
+    $ mongo --port 26001  
+    MongoDB Enterprise m103-csrs:PRIMARY> rs.initiate()  
+    MongoDB Enterprise m103-csrs:PRIMARY> use admin  
+    MongoDB Enterprise m103-repl:PRIMARY> db.createUser({  
+    								user: "m103-admin",  
+    								pwd: "m103-pass",  
+    								roles: [{role: "root", db: "admin"}]
+    								})  
+      
+    MongoDB Enterprise m103-repl:PRIMARY> db.auth("m103-admin","m103-pass")  
+      
+    MongoDB Enterprise m103-repl:PRIMARY> exit  
+    MongoDB Enterprise m103-repl:PRIMARY> mongo --host "m103-csrs/192.168.103.100:26001" -u "m103-admin" -p "m103-pass" --authenticationDatabase "admin"  
+    MongoDB Enterprise m103-repl:PRIMARY> rs.status()  
+    MongoDB Enterprise m103-repl:PRIMARY> rs.add("m103:26002")  
+    MongoDB Enterprise m103-repl:PRIMARY> rs.add("m103:26003")
+    
+ **2.Configure mongos** 
+```
+$ csrs_1.conf  
+$ vi csrs_1.conf  
+```
+  
+> sharding:  
+>  &ensp;configDB:m103-csrs/192.168.103.100:26001,192.168.103.100:26002,192.168.103.100:26003
+> security:   
+> &ensp;keyFile: /var/mongodb/pki/m103-keyfile 
+>   net:  
+> &ensp;bindIp: localhost,192.168.103.100   
+> &ensp;port: 26000  
+> systemLog: 
+>   &ensp;destination: file
+>      &ensp;path: /var/mongodb/db/mongos.log
+>         &ensp;logAppend: true  
+> processManagement:
+>    &ensp;fork: true
+
+    $ mongos -f mongos.conf  
+
+  
+  **3. Reconfigure m103-repl**  
+  
+Replicaset config files (port: 27001,27002,27003):
+> sharding:  
+>  &ensp;clusterRole: shardsvr   
+>  storage:  
+>   &ensp;wiredTiger:
+> &ensp;&ensp;engineConfig:  
+>  &ensp;&ensp;&ensp;cacheSizeGB: .1  
+> storage: 
+>   &ensp;dbPath: /var/mongodb/db/1
+>      net:   
+>      &ensp;bindIp: 192.168.103.100,localhost 
+>        &ensp;port: 27001 
+>          security:  
+>           &ensp;authorization: enabled   
+>           &ensp;keyFile:/var/mongodb/pki/m103-keyfile
+>              systemLog:   
+>              &ensp;destination: file  
+> &ensp;path: /var/mongodb/db/mongod1.log  
+>  &ensp;logAppend: true  
+> processManagement:   
+> &ensp;fork: true 
+>   replication:  
+> &ensp;replSetName: m103-repl
+
+Append the below configuration options to the replicaset config files: 
+> sharding:   
+> &ensp;clusterRole: shardsvr  
+>  storage:   
+>  &ensp;wiredTiger:
+> &ensp;&ensp;engineConfig:
+>    &ensp;&ensp;&ensp;cacheSizeGB: .1
+
+  
+
+    $ vi mongod-repl-1.conf  
+    $ vi mongod-repl-2.conf  
+    $ vi mongod-repl-3.conf  
+      
+    $ mongod -f mongod-repl-1.conf  
+    $ mongod -f mongod-repl-2.conf  
+    $ mongod -f mongod-repl-3.conf  
+
+  
+**4. Add m103-repl as the first shard**  
+
+    $ mongo --port 26000 -u "m103-admin" -p "m103-pass" --authenticationDatabase "admin"  
+    MongoDB Enterprise mongos> sh.addShard("m103-repl/m103:27001")  
+
+-------------------
+    $ validate_lab_first_sharded_cluster  
+
+> *OutputValidationKey*
+
+### Lab - Shard a Collection  
+
+    $ mkdir /var/mongodb/db/{4,5,6}  
+    $ vi mongod-repl-4.conf  
+
+  
+
+> storage:   
+> &ensp;dbPath: /var/mongodb/db/4   
+> &ensp;&ensp;wiredTiger:
+>    &ensp;&ensp;&ensp;engineConfig:  
+>&ensp;&ensp;&ensp;&ensp; cacheSizeGB: .1
+>    net:
+>&ensp;       bindIp: 192.168.103.100,localhost   
+> &ensp;      port:27004   
+> security:
+> &ensp;   keyFile: /var/mongodb/pki/m103-keyfile  
+> systemLog:
+> &ensp;   destination: file   
+>   &ensp; path: /var/mongodb/db/4/mongod.log  
+>    &ensp;logAppend: true
+>       processManagement:
+>       &ensp;   fork: true  
+> operationProfiling:
+>    &ensp;slowOpThresholdMs: 50
+>       replication:  
+>&ensp; replSetName: m103-repl-2
+>    sharding:
+>  &ensp;     clusterRole: shardsvr
+
+  
+
+    $ cp mongod-repl-4.conf mongod-repl-5.conf  
+    $ cp mongod-repl-4.conf mongod-repl-6.conf  
+    $ vi mongod-repl-5.conf  
+    $ vi mongod-repl-6.conf  
+      
+    $ mongod -f mongod-repl-4.conf  
+    $ mongod -f mongod-repl-5.conf  
+    $ mongod -f mongod-repl-6.conf  
+      
+    $ mongo --port 27004  
+    MongoDB Enterprise m103-repl-2:PRIMARY> rs.initiate()  
+    MongoDB Enterprise m103-repl-2:PRIMARY>use admin  
+    MongoDB Enterprise m103-repl-2:PRIMARY>db.createUser({
+        user: "m103-admin",
+        pwd: "m103-pass",
+        roles: [
+          {role: "root", db: "admin"}
+        ]
+      })
+      
+    MongoDB Enterprise m103-repl-2:PRIMARY> db.auth("m103-admin","m103-pass")  
+    MongoDB Enterprise m103-repl-2:PRIMARY> rs.status()  
+    MongoDB Enterprise m103-repl-2:PRIMARY> rs.add("m103:27005")  
+    MongoDB Enterprise m103-repl-2:PRIMARY> rs.add("m103:27006")  
+  
+    MongoDB Enterprise m103-repl-2:PRIMARY> exit  
+    $ mongo --host "m103-repl/192.168.103.100:27001" -u "m103-admin" -p "m103-pass" --authenticationDatabase "admin"  
+          
+    MongoDB Enterprise mongos> sh.addShard("m103-repl-2/192.168.103.100:27004")  
+      
+    $ mongoimport --drop /dataset/products.json --port 26000 -u "m103-admin" \  
+    -p "m103-pass" --authenticationDatabase "admin" \  
+    --db m103 --collection products  
+      
+    MongoDB Enterprise mongos> sh.enableSharding("m103")  
+    MongoDB Enterprise mongos> use m103  
+    MongoDB Enterprise mongos> db.products.createIndex({"sku": 1})
+    MongoDB Enterprise mongos> sh.shardCollection("m103.products", {"sku" : 1 } )
+
+  
+------------------------------------  
+
+
+    $ validate_lab_shard_collection  
+
+> *OutputValidationKey*
 
 ## Final Exam
 
@@ -630,6 +860,20 @@ Consider a 3-node replica set with only 2 healthy nodes, that receives the follo
 3. It serves as a hidden secondary available to use for non-critical analysis operations  
   
 -------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
