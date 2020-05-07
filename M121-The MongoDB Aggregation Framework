@@ -1,0 +1,185 @@
+# M121 - The MongoDB Aggregation Framework
+
+# Table of Contents:
+
+  * [Points to Remember in Aggregation Framework:](#points-to-remember-in-aggregation-framework-)
+    + [Conventions](#conventions)
+  * [Chapter 1: Basic Aggregation - $match and $project](#chapter-1--basic-aggregation----match-and--project)
+    + [Lab - $match](#lab----match)
+    + [Lab - Changing Document Shape with $project](#lab---changing-document-shape-with--project)
+    + [Lab - Computing Fields](#lab---computing-fields)
+    + [Optional Lab - Expressions with $project](#optional-lab---expressions-with--project)
+  * [Chapter 2: Basic Aggregation - Utility Stages](#chapter-2--basic-aggregation---utility-stages)
+
+
+
+
+
+### **Points to Remember in Aggregation Framework:**
+	
+
+   - Pipelines are always an array of one or more stages.
+ - Stages are composed of one or more aggregation operators or expressions.	
+ -   Expressions may take a single argument or an array of arguments.
+
+ -  **Conventions**
+	1. Field Path: "fieldName"    ("\$numberOfMoons")
+	2. System Variable: "\$\$UPPERCASE"    ("\$\$CURRENT")
+	3. User Variable: "\$\$foo"
+
+
+- **$match:**
+	- A **\$match** stage may contain a **$text** query operator, but it must be the first stage in the pipeline.
+	- -$match should come early in an aggregation pipeline.
+	- You cannot use **$where** with match.
+	-  $match uses the **same** query syntax as find.
+- **$project:**
+	- Once we specify one field to retain, we must specify all fields we want to retain. The 		   _id field is the only exception to this.
+	- Beyond simply removing and retaining fields, $project also lets us add new fields.
+	- $project can be used as many times as required within an Aggregation Pipeline.
+	- $project can be used to reassign values to existing field names and to derive entirely new fields.
+- **$map:**
+	- $map lets us iterate over an array, element by element, performing some transformation on each element. The result of that transformation will be returned in the same place as the original element. 
+	- $map takes three arguements: 
+	   1. *input*
+	   2.  *as*(optional, but if omitted, each element must be referred as 	*$$this*)
+	   3. *in*
+	  
+
+## Chapter 1: Basic Aggregation - $match and $project
+### Lab - $match
+**Problem: Help MongoDB pick a movie our next movie night! Based on employee polling, we've decided that potential movies must meet the following criteria.**
+
+-   **imdb.rating  is at least 7**
+-   **genres  does not contain "Crime" or "Horror"**
+-   **rated  is either "PG" or "G"**
+-   **languages  contains "English" and "Japanese"**
+
+**Assign the aggregation to a variable named  pipeline**
+
+    var pipeline = [{
+        $match: {
+            "imdb.rating": {
+                $gte: 7
+            },
+            genres: {
+                $nin: ["Crime", "Horror"]
+            },
+            rated: {
+                $in: ["PG", "G"]
+            },
+            languages: {
+                $all: ["English", "Japanese"]
+            }
+        }
+    }]
+
+
+### Lab - Changing Document Shape with $project
+**Problem: Our first movie night was a success. Unfortunately, our ISP called to let us know we're close to our bandwidth quota, but we need another movie recommendation!
+Using the same  $match  stage from the previous lab, add a  $project  stage to only display the the title and film rating (title  and  rated  fields).**
+
+        MongoDB Enterprise Cluster0-shard-0:PRIMARY> var pipeline = [{
+         $match: {
+             "imdb.rating": {
+                 $gte: 7
+             },
+             genres: {
+                 $nin: ["Crime", "Horror"]
+             },
+             rated: {
+                 $in: ["PG", "G"]
+             },
+             languages: {
+                 $all: ["English", "Japanese"]
+             }
+         }
+     }]
+     MongoDB Enterprise Cluster0-shard-0:PRIMARY> db.movies.aggregate(pipeline)
+
+### Lab - Computing Fields
+**Problem: Our movies dataset has a lot of different documents, some with more convoluted titles than others. If we'd like to analyze our collection to find movie titles that are composed of only one word, we  *could*  fetch all the movies in the dataset and do some processing in a client application, but the Aggregation Framework allows us to do this on the server!
+Using the Aggregation Framework, find a count of the number of movies that have a title composed of one word. To clarify, "Cinderella" and "3-25" should count, where as "Cast Away" would not.**
+
+    MongoDB Enterprise Cluster0-shard-0:PRIMARY> var pipeline = [{
+        $project: {
+            _id: 0,
+            "movSize": {
+                "$size": {
+                    "$split": ["$title", " "]
+                }
+            }
+        }
+    }, {
+        $match: {
+            movSize: 1
+        }
+    }]
+    MongoDB Enterprise Cluster0-shard-0:PRIMARY> db.movies.aggregate(pipeline)
+
+
+
+### Optional Lab - Expressions with $project
+**Problem: Let's find how many movies in our  *movies*  collection are a "labor of love", where the same person appears in  cast,  directors, and  writers.**
+
+        db.movies.aggregate([{
+        $match: {
+            cast: {
+                $elemMatch: {
+                    $exists: true
+                }
+            },
+            directors: {
+                $elemMatch: {
+                    $exists: true
+                }
+            },
+            writers: {
+                $elemMatch: {
+                    $exists: true
+                }
+            }
+        }
+    }, {
+        $project: {
+            _id: 0,
+            cast: 1,
+            directors: 1,
+            writers: {
+                $map: {
+                    input: "$writers",
+                    as: "writer",
+                    in : {
+                        $arrayElemAt: [{
+                                $split: ["$$writer", " ("]
+                            },
+                            0
+                        ]
+                    }
+                }
+            }
+        }
+    }, {
+        $project: {
+            labor_of_love: {
+                $gt: [{
+                        $size: {
+                            $setIntersection: ["$cast", "$directors", "$writers"]
+                        }
+                    },
+                    0
+                ]
+            }
+        }
+    }, {
+        $match: {
+            labor_of_love: true
+        }
+    }, {
+        $count: "labors of love"
+    }])
+
+
+
+
+## Chapter 2: Basic Aggregation - Utility Stages
