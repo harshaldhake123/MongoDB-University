@@ -1,6 +1,6 @@
 # M121 - The MongoDB Aggregation Framework
 
-# Table of Contents:
+## Table of Contents:
 
   * [Points to Remember in Aggregation Framework:](#points-to-remember-in-aggregation-framework-)
     + [Conventions](#conventions)
