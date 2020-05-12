@@ -689,7 +689,7 @@ MongoDB Enterprise Cluster0-shard-0:PRIMARY> db.movies.aggregate(pipeline,{allow
 	- View Definitions are public.
 	- Sensitive info must not be referred in view.
 	
-Final Exam
+## Final Exam
 
 ### Final: Question 1
 
@@ -754,8 +754,57 @@ Check all answers that apply:
  - **Pipeline 2**  is incorrect because  $geoNear  needs to be the first stage of our pipeline
 - **Pipeline 3**  fails because  $indexStats  must be the first stage in a pipeline and may not be used within a  $facet
 - **Pipeline 1**  fails since  $out  is required to be the last stage of the pipeline
+
+### Final: Question 2
+
+Problem:
+
+Consider the following collection:
+~~~
+db.collection.find()
+{
+  "a": [1, 34, 13]
+}
+~~~
+**The following pipelines are executed on top of this collection, using a mixed set of different expression accross the different stages:**
+
+-   **Pipeline 1**
+~~~
+db.collection.aggregate([
+  {"$match": { "a" : {"$sum": 1}  }},
+  {"$project": { "_id" : {"$addToSet": "$a"}  }},
+  {"$group": { "_id" : "", "max_a": {"$max": "$_id"}  }}
+])
+~~~
+-   **Pipeline 2**
+~~~
+db.collection.aggregate([
+    {"$project": { "a_divided" : {"$divide": ["$a", 1]}  }}
+])
+~~~
+-   **Pipeline 3**
+~~~
+db.collection.aggregate([
+    {"$project": {"a": {"$max": "$a"}}},
+    {"$group": {"_id": "$$ROOT._id", "all_as": {"$sum": "$a"}}}
+])
+~~~
+**Given these pipelines, which of the following statements are correct?**
+
+**Check all answers that apply:**
+
+- **Pipeline 2**  is incorrect since  $divide  cannot operate over field expressions
+
+- **Pipeline 2**  fails because the  $divide  operator only supports numeric types
+
+- **Pipeline 1**  will fail because  $max  can not operator on  _id  field
+
+- **Pipeline 3**  is correct and will execute with no error
+
+- **Pipeline 1**  is incorrect because you cannot use an accumulator expression in a  $match  stage.
+
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE4Njk0MzA1NzMsLTc2NTczMTc2NSw4NT
+eyJoaXN0b3J5IjpbLTEyMTU4MTAwNjcsLTc2NTczMTc2NSw4NT
 YxMTA5NTIsLTEzMzk2MDA3NzQsLTEzMTIxNTg3MDQsLTgwMTIy
 OTY2NCw0MTYzNzgzMDhdfQ==
 -->
