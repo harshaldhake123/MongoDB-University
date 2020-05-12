@@ -642,7 +642,7 @@ MongoDB Enterprise Cluster0-shard-0:PRIMARY> db.movies.aggregate(pipeline,{allow
 
 
 
-## Chapter 5: 
+## Chapter 5: Miscellaneous Aggregation
 
 - **$redact**
 	- **\$\$KEEP** and **$$PRUNE** automatically apply to all levels below evaluated level.
@@ -667,7 +667,9 @@ MongoDB Enterprise Cluster0-shard-0:PRIMARY> db.movies.aggregate(pipeline,{allow
 			-  ["_id", "shard key(s)"]
 	 - whenNotMatched  (**"insert"|"discard"|"fail"**)
 	 -  whenMatched ("**"merge"|"replace"|"keepExisting"|"fail"**)
+
+
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEzMzk2MDA3NzQsLTEzMTIxNTg3MDQsLT
-gwMTIyOTY2NCw0MTYzNzgzMDhdfQ==
+eyJoaXN0b3J5IjpbODU2MTEwOTUyLC0xMzM5NjAwNzc0LC0xMz
+EyMTU4NzA0LC04MDEyMjk2NjQsNDE2Mzc4MzA4XX0=
 -->
