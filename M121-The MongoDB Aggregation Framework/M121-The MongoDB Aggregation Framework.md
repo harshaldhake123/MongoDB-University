@@ -503,7 +503,7 @@ MongoDB Enterprise Cluster0-shard-0:PRIMARY> db.air_routes.aggregate(pipeline,{a
 *Answer*
 - SkyTeam
 
-### Lab -
+### Lab - $graphLookup
 
 **Problem:**
 **Now that you have been introduced to  $graphLookup, let's use it to solve an interesting need. You are working for a travel agency and would like to find routes for a client! For this exercise, we'll be using the  **air_airlines**,  **air_alliances**, and  **air_routes**  collections in the  **aggregations**  database.**
