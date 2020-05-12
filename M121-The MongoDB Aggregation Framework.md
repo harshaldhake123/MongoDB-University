@@ -805,10 +805,9 @@ db.collection.aggregate([
 
 ### Final: Question 3
 
-Problem:
-
-Consider the following collection documents:
-
+**Problem:**
+**Consider the following collection documents:**
+~~~
 db.people.find()
 { "_id" : 0, "name" : "Bernice Pope", "age" : 69, "date" : ISODate("2017-10-04T18:35:44.011Z") }
 { "_id" : 1, "name" : "Eric Malone", "age" : 57, "date" : ISODate("2017-10-04T18:35:44.014Z") }
@@ -820,11 +819,9 @@ db.people.find()
 { "_id" : 7, "name" : "Herbert Mason", "age" : 37, "date" : ISODate("2017-10-04T18:35:44.020Z") }
 { "_id" : 8, "name" : "Jesse Jordan", "age" : 47, "date" : ISODate("2017-10-04T18:35:44.020Z") }
 { "_id" : 9, "name" : "Hulda Fuller", "age" : 25, "date" : ISODate("2017-10-04T18:35:44.020Z") }
-
- COPY
-
-And the aggregation pipeline execution result:
-
+~~~
+**And the aggregation pipeline execution result:**
+~~~
 db.people.aggregate(pipeline)
 { "_id" : 8, "names" : [ "Sue Perez" ], "word" : "P" }
 { "_id" : 9, "names" : [ "Ryan White" ], "word" : "W" }
@@ -832,16 +829,96 @@ db.people.aggregate(pipeline)
 { "_id" : 11, "names" : [ "Bernice Pope", "Jessie Yates", "Jesse Jordan", "Hulda Fuller" ], "word" : "PYJF" }
 { "_id" : 12, "names" : [ "Herbert Mason" ], "word" : "M" }
 { "_id" : 13, "names" : [ "Blanche Miller" ], "word" : "M" }
+~~~
+**Which of the following pipelines generates the output result?
+Choose the best answer:**
+*Answer:*
+
+~~~
+var pipeline = [{
+    "$project": {
+      "surname_capital": { "$substr": [{"$arrayElemAt": [ {"$split": [ "$name", " " ] }, 1]}, 0, 1 ] },
+      "name_size": {  "$add" : [{"$strLenCP": "$name"}, -1]},
+      "name": 1
+    }
+  },
+  {
+    "$group": {
+      "_id": "$name_size",
+      "word": { "$push": "$surname_capital" },
+      "names": {"$push": "$name"}
+    }
+  },
+  {
+    "$project": {
+      "word": {
+        "$reduce": {
+          "input": "$word",
+          "initialValue": "",
+          "in": { "$concat": ["$$value", "$$this"] }
+        }
+      },
+      "names": 1
+    }
+  },
+  {
+    "$sort": { "_id": 1}
+  }
+]
+~~~
+
+
+### Final: Question 4
+
+Problem:
+
+$facet  is an aggregation stage that allows for sub-pipelines to be executed.
+
+var pipeline = [
+  {
+    $match: { a: { $type: "int" } }
+  },
+  {
+    $project: {
+      _id: 0,
+      a_times_b: { $multiply: ["$a", "$b"] }
+    }
+  },
+  {
+    $facet: {
+      facet_1: [{ $sortByCount: "a_times_b" }],
+      facet_2: [{ $project: { abs_facet1: { $abs: "$facet_1._id" } } }],
+      facet_3: [
+        {
+          $facet: {
+            facet_3_1: [{ $bucketAuto: { groupBy: "$_id", buckets: 2 } }]
+          }
+        }
+      ]
+    }
+  }
+]
 
  COPY
 
-Which of the following pipelines generates the output result?
+In the above pipeline, which uses  $facet, there are some incorrect stages or/and expressions being used.
+
+Which of the following statements point out errors in the pipeline?
 
 **Attempts Remaining:**Correct Answer
 
-Choose the best answer:
+Check all answers that apply:
+
+a  $multiply  expression takes a document as input, not an array.
+
+can not nest a  $facet  stage as a sub-pipeline.
+
+facet_2  uses the output of a parallel sub-pipeline,  facet_1, to compute an expression
+
+$sortByCount  cannot be used within  $facet  stage.
+a  $type  expression does not take a string as its value; only the BSON numeric values can be specified to identify the types.
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTc4NjQwNzA2OSwtNzY1NzMxNzY1LDg1Nj
+eyJoaXN0b3J5IjpbLTkzNTE0MTU1NSwtNzY1NzMxNzY1LDg1Nj
 ExMDk1MiwtMTMzOTYwMDc3NCwtMTMxMjE1ODcwNCwtODAxMjI5
 NjY0LDQxNjM3ODMwOF19
 -->
