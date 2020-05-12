@@ -693,12 +693,11 @@ Final Exam
 
 ### Final: Question 1
 
-Problem:
-
-Consider the following aggregation pipelines:
+**Problem:
+Consider the following aggregation pipelines:**
 
 -   **Pipeline 1**
-
+~~~
 db.coll.aggregate([
   {"$match": {"field_a": {"$gt": 1983}}},
   {"$project": { "field_a": "$field_a.1", "field_b": 1, "field_c": 1  }},
@@ -707,11 +706,9 @@ db.coll.aggregate([
   {"$match": {"_id.field_f": {"$gt": 1}}},
   {"$replaceRoot":{"newRoot": {"_id": "$field_b", "field_c": "$_id"}}}
 ])
-
- COPY
-
+~~~
 -   **Pipeline 2**
-
+~~~
 db.coll.aggregate([
   {"$match": {"field_a": {"$gt": 111}}},
   {"$geoNear": {
@@ -719,12 +716,10 @@ db.coll.aggregate([
     "distanceField": "distance"}},
   {"$project": { "distance": "$distance", "name": 1, "_id": 0  }}
 ])
-
- COPY
-
+~~~
 -   **Pipeline 3**
  
-
+~~~
 db.coll.aggregate([
   {
     "$facet": {
@@ -742,6 +737,7 @@ db.coll.aggregate([
     }
   }
 ])
+~~~
 
 **Which of the following statements are correct?**
 Check all answers that apply:
@@ -753,8 +749,13 @@ Check all answers that apply:
 - **Pipeline 3**  executes correctly
 - **Pipeline 3**  fails since you can only have one  $facet  stage per pipeline
 
+
+*Answer:*
+ - **Pipeline 2**  is incorrect because  $geoNear  needs to be the first stage of our pipeline
+- **Pipeline 3**  fails because  $indexStats  must be the first stage in a pipeline and may not be used within a  $facet
+- **Pipeline 1**  fails since  $out  is required to be the last stage of the pipeline
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTg5MjU4Mjc2NSwtNzY1NzMxNzY1LDg1Nj
-ExMDk1MiwtMTMzOTYwMDc3NCwtMTMxMjE1ODcwNCwtODAxMjI5
-NjY0LDQxNjM3ODMwOF19
+eyJoaXN0b3J5IjpbLTE4Njk0MzA1NzMsLTc2NTczMTc2NSw4NT
+YxMTA5NTIsLTEzMzk2MDA3NzQsLTEzMTIxNTg3MDQsLTgwMTIy
+OTY2NCw0MTYzNzgzMDhdfQ==
 -->
