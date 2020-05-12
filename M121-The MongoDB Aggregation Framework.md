@@ -1045,77 +1045,53 @@ Choose the best answer:**
 
 ~~~
 db.air_routes.aggregate([{
-
-$match: {
-
-src_airport: { $in: ["LHR", "JFK"] },
-
-dst_airport: { $in: ["LHR", "JFK"] }
-
-}
-
-  
-
-},
-
-{
-
-$lookup: {
-
-from:  "air_alliances",
-
-localField:  "airline.name",
-
-foreignField:  "airlines",
-
-as:  "alliance",
-
-}
-
-},
-
-{
-
-$match: {
-
-"alliance": {
-
-$ne: []
-
-}
-
-},
+    $match: {
+        src_airport: {
+            $in: ["LHR", "JFK"]
+        },
+        dst_airport: {
+            $in: ["LHR", "JFK"]
+        }
+    }
 
 }, {
-
-$addFields: {
-
-alliance: { $arrayElemAt: ["$alliance.name", 0] }
-
-}
-
-},
-
-{
-
-$group: {
-
-"_id":  "$airline.id",
-
-alliance: { $first:  "$alliance" }
-
-}
-
-},
-
-{ $sortByCount:  "$alliance" },
-
-{ $limit:  1 }
-
-])
+    $lookup: {
+        from: "air_alliances",
+        localField: "airline.name",
+        foreignField: "airlines",
+        as: "alliance",
+    }
+}, {
+    $match: {
+        "alliance": {
+            $ne: []
+        }
+    },
+}, {
+    $addFields: {
+        alliance: {
+            $arrayElemAt: ["$alliance.name", 0]
+        }
+    }
+}, {
+    $group: {
+        "_id": "$airline.id",
+        alliance: {
+            $first: "$alliance"
+        }
+    }
+}, {
+    $sortByCount: "$alliance"
+}, {
+    $limit: 1
+}])
 ~~~
+
+*Answer:*
+
+- OneWorld, with 4 carriers
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTgzNTQwNTM1MCwtNjQxNTM3NDY4LC03Nj
-U3MzE3NjUsODU2MTEwOTUyLC0xMzM5NjAwNzc0LC0xMzEyMTU4
-NzA0LC04MDEyMjk2NjQsNDE2Mzc4MzA4XX0=
+eyJoaXN0b3J5IjpbMTYzNTI4NTMyLC02NDE1Mzc0NjgsLTc2NT
+czMTc2NSw4NTYxMTA5NTIsLTEzMzk2MDA3NzQsLTEzMTIxNTg3
+MDQsLTgwMTIyOTY2NCw0MTYzNzgzMDhdfQ==
 -->
