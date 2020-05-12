@@ -1,23 +1,3 @@
-- [M121 - The MongoDB Aggregation Framework](#m121---the-mongodb-aggregation-framework)
-    + [Aggregation Framework:](#aggregation-framework-)
-  * [Chapter 1: Basic Aggregation - $match and $project](#chapter-1--basic-aggregation----match-and--project)
-    + [Points to remember:](#points-to-remember-)
-    + [Lab - $match](#lab----match)
-    + [Lab - Changing Document Shape with $project](#lab---changing-document-shape-with--project)
-    + [Lab - Computing Fields](#lab---computing-fields)
-    + [Optional Lab - Expressions with $project](#optional-lab---expressions-with--project)
-  * [Chapter 2: Basic Aggregation - Utility Stages](#chapter-2--basic-aggregation---utility-stages)
-    + [Points to remember:](#points-to-remember--1)
-    + [Lab - Using Cursor-like Stages](#lab---using-cursor-like-stages)
-    + [Lab - Bringing it all together](#lab---bringing-it-all-together)
-  * [Chapter 3: Core Aggregation - Combining Information](#chapter-3--core-aggregation---combining-information)
-    + [Points to remember:](#points-to-remember--2)
-    + [Lab - $group and Accumulators](#lab----group-and-accumulators)
-    + [Lab - $unwind](#lab----unwind)
-    + [Lab - Using $lookup](#lab---using--lookup)
-    + [Lab -](#lab--)
-  * [Chapter 4: Core Aggregation - Multidimensional Grouping](#chapter-4--core-aggregation---multidimensional-grouping)
-    + [Lab - $facets](#lab----facets)
 
 # M121 - The MongoDB Aggregation Framework
 
@@ -660,3 +640,31 @@ MongoDB Enterprise Cluster0-shard-0:PRIMARY> db.movies.aggregate(pipeline,{allow
 ~~~
 *Answer*: 1
 
+
+
+## Chapter 5: 
+
+- **$redact**
+	- **\$\$KEEP** and **$$PRUNE** automatically apply to all levels below evaluated level.
+	- **$$DESCEND** retains current level and evaluates next level down.
+2	- $redact is not for restricting access to a collection.
+
+- **$out**
+	- Must be the last stage in a pipeline.
+	- cant be used within a $facet.
+	- Mongodb will create a collection of name specified / replace if collection already exists.
+	- new collection will be created in the same database.
+	- Must honor existing indexes if specifying an existing collection.
+	-  Will not create / replace collection if pipeline errors.
+	- The existing collection that is to be replaced should not be sharded.
+
+-  **$merge**
+	- can output to a collection in same or different database.
+	- Arguments:
+	- into(target collection)
+	- on
+			-  "_id" (if *on* not specified)
+			-  ["_id", "shard key(s)"]
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbNDE2Mzc4MzA4XX0=
+-->
