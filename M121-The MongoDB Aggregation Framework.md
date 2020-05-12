@@ -1035,9 +1035,16 @@ var pipeline = [
 db.createView("people_contacts", "people", pipeline);
 ~~~
 
+### Final: Question 7
+
+**Problem:
+Using the  air_alliances  and  air_routes  collections, find which  *alliance*  has the most unique carriers(airlines) operating between the airports  *JFK*  and  *LHR*, in either directions.
+Names are distinct, i.e.  Delta != Delta Air Lines
+*src_airport*  and  *dst_airport*  contain the originating and terminating airport information.
+Choose the best answer:**
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE2MTg2OTAxMiwtNzY1NzMxNzY1LDg1Nj
+eyJoaXN0b3J5IjpbLTY0MTUzNzQ2OCwtNzY1NzMxNzY1LDg1Nj
 ExMDk1MiwtMTMzOTYwMDc3NCwtMTMxMjE1ODcwNCwtODAxMjI5
 NjY0LDQxNjM3ODMwOF19
 -->
