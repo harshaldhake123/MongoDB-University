@@ -670,9 +670,11 @@ MongoDB Enterprise Cluster0-shard-0:PRIMARY> db.movies.aggregate(pipeline,{allow
 
 
 
-- Views
+- **Views**
+- No write operations
+- No index operations(c)
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE5MTQyMzc4NjcsODU2MTEwOTUyLC0xMz
+eyJoaXN0b3J5IjpbLTE2NjI5MDYyNzQsODU2MTEwOTUyLC0xMz
 M5NjAwNzc0LC0xMzEyMTU4NzA0LC04MDEyMjk2NjQsNDE2Mzc4
 MzA4XX0=
 -->
