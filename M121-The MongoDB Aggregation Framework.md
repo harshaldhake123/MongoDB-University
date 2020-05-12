@@ -671,7 +671,9 @@ MongoDB Enterprise Cluster0-shard-0:PRIMARY> db.movies.aggregate(pipeline,{allow
 
 
 - **Views**
-- Contain no data themselves, created on demand.
+	- Contain no data themselves, created on demand.
+	- Horizontal slicing performed using $match stage.
+	 - Vertical slicing performed using $project or other shaping stage.
 	- No write operations
 	- No index operations(create, Update)
 	- No renaming	(immutable)
@@ -679,18 +681,16 @@ MongoDB Enterprise Cluster0-shard-0:PRIMARY> db.movies.aggregate(pipeline,{allow
 	- No \$text	(\$text can only be used in first stage of a pipeline)
 	- No \$geoNear(\$geoNear can only be used in first stage of a pipeline)
 	- Collation restrictions	(do not inherit collations of source collection)
-	- find() operation with projection operators not allowed. 
-	- eg.
-		- $
-		- $elemMatch
-		- $slice
-		- $meta
+	- find() operation with projection operators not allowed. Eg-
+			- $
+			- $elemMatch
+			- $slice
+			- $meta
 	- View Definitions are public.
 	- Sensitive info must not be referred in view.
-- Horizontal slicing performed using $match stage.
- - Vertical slicing performed using $project or other shaping stage.
+	
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTg2ODkxMTA1Nyw4NTYxMTA5NTIsLTEzMz
+eyJoaXN0b3J5IjpbLTc2NTczMTc2NSw4NTYxMTA5NTIsLTEzMz
 k2MDA3NzQsLTEzMTIxNTg3MDQsLTgwMTIyOTY2NCw0MTYzNzgz
 MDhdfQ==
 -->
