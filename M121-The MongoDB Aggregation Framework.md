@@ -907,13 +907,14 @@ Which of the following statements point out errors in the pipeline?**
 - facet_2  uses the output of a parallel sub-pipeline,  facet_1, to compute an expression
 - $sortByCount  cannot be used within  $facet  stage.
 - a  $type  expression does not take a string as its value; only the BSON numeric values can be specified to identify the types.
-- 
+
 *Answer:*
 - can not nest a  $facet  stage as a sub-pipeline.
 - facet_2  uses the output of a parallel sub-pipeline,  facet_1, to compute an expression
  
+
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE0MzYzNzA2NDksLTc2NTczMTc2NSw4NT
-YxMTA5NTIsLTEzMzk2MDA3NzQsLTEzMTIxNTg3MDQsLTgwMTIy
-OTY2NCw0MTYzNzgzMDhdfQ==
+eyJoaXN0b3J5IjpbLTQxMjUyMjU1OCwtNzY1NzMxNzY1LDg1Nj
+ExMDk1MiwtMTMzOTYwMDc3NCwtMTMxMjE1ODcwNCwtODAxMjI5
+NjY0LDQxNjM3ODMwOF19
 -->
