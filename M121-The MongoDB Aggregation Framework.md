@@ -912,9 +912,80 @@ Which of the following statements point out errors in the pipeline?**
 - can not nest a  $facet  stage as a sub-pipeline.
 - facet_2  uses the output of a parallel sub-pipeline,  facet_1, to compute an expression
  
+### Final: Question 5
 
+Problem:
+
+Consider a company producing solar panels and looking for the next markets they want to target in the USA. We have a collection with all the major  **cities**  (more than 100,000 inhabitants) from all over the World with recorded number of sunny days for some of the last years.
+
+A sample document looks like the following:
+
+db.cities.findOne()
+{
+"_id": 10,
+"city": "San Diego",
+"region": "CA",
+"country": "USA",
+"sunnydays": [220, 232, 205, 211, 242, 270]
+}
+
+ COPY
+
+The collection also has these indexes:
+
+db.cities.getIndexes()
+[
+{
+  "v": 2,
+  "key": {
+    "_id": 1
+  },
+  "name": "_id_",
+  "ns": "test.cities"
+},
+{
+  "v": 2,
+  "key": {
+    "city": 1
+  },
+  "name": "city_1",
+  "ns": "test.cities"
+},
+{
+  "v": 2,
+  "key": {
+    "country": 1
+  },
+  "name": "country_1",
+  "ns": "test.cities"
+}
+]
+
+ COPY
+
+We would like to find the cities in the USA where the minimum number of sunny days is 200 and the average number of sunny days is at least 220. Lastly, we'd like to have the results sorted by the city's name. The matching documents may or may not have a different shape than the initial one.
+
+We have the following query:
+
+var pipeline = [
+    {"$addFields": { "min": {"$min": "$sunnydays"}}},
+    {"$addFields": { "mean": {"$avg": "$sunnydays" }}},
+    {"$sort": {"city": 1}},
+    {"$match": { "country": "USA", "min": {"$gte": 200}, "mean": {"$gte": 220}}}
+]
+db.cities.aggregate(pipeline)
+
+ COPY
+
+However, this pipeline execution can be optimized!
+
+Which of the following choices is still going to produce the expected results and likely improve the most the execution of this aggregation pipeline?
+
+**Attempts Remaining:**Correct Answer
+
+Choose the best answer:
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTQxMjUyMjU1OCwtNzY1NzMxNzY1LDg1Nj
-ExMDk1MiwtMTMzOTYwMDc3NCwtMTMxMjE1ODcwNCwtODAxMjI5
-NjY0LDQxNjM3ODMwOF19
+eyJoaXN0b3J5IjpbLTE2NzgwMTYxNDgsLTc2NTczMTc2NSw4NT
+YxMTA5NTIsLTEzMzk2MDA3NzQsLTEzMTIxNTg3MDQsLTgwMTIy
+OTY2NCw0MTYzNzgzMDhdfQ==
 -->
