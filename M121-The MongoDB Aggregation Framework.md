@@ -723,6 +723,7 @@ db.coll.aggregate([
  COPY
 
 -   **Pipeline 3**
+ 
 
 db.coll.aggregate([
   {
@@ -742,29 +743,18 @@ db.coll.aggregate([
   }
 ])
 
- COPY
-
-Which of the following statements are correct?
-
-**Attempts Remaining:**Correct Answer
-
+**Which of the following statements are correct?**
 Check all answers that apply:
+- **Pipeline 2**  is incorrect because  $geoNear  needs to be the first stage of our pipeline
+- **Pipeline 1**  is incorrect because you can only have one  $replaceRoot  stage in your pipeline
+- **Pipeline 3**  fails because  $indexStats  must be the first stage in a pipeline and may not be used within a  $facet
+- **Pipeline 1**  fails since  $out  is required to be the last stage of the pipeline
+- **Pipeline 2**  fails because we cannot project  distance  field
+- **Pipeline 3**  executes correctly
+- **Pipeline 3**  fails since you can only have one  $facet  stage per pipeline
 
-**Pipeline 2**  is incorrect because  $geoNear  needs to be the first stage of our pipeline
-
-**Pipeline 1**  is incorrect because you can only have one  $replaceRoot  stage in your pipeline
-
-**Pipeline 3**  fails because  $indexStats  must be the first stage in a pipeline and may not be used within a  $facet
-
-**Pipeline 1**  fails since  $out  is required to be the last stage of the pipeline
-
-**Pipeline 2**  fails because we cannot project  distance  field
-
-**Pipeline 3**  executes correctly
-
-**Pipeline 3**  fails since you can only have one  $facet  stage per pipeline
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE4NTgzNzIyNSwtNzY1NzMxNzY1LDg1Nj
+eyJoaXN0b3J5IjpbMTg5MjU4Mjc2NSwtNzY1NzMxNzY1LDg1Nj
 ExMDk1MiwtMTMzOTYwMDc3NCwtMTMxMjE1ODcwNCwtODAxMjI5
 NjY0LDQxNjM3ODMwOF19
 -->
