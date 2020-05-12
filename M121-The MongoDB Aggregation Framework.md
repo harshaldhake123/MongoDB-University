@@ -757,9 +757,8 @@ Check all answers that apply:
 
 ### Final: Question 2
 
-Problem:
-
-Consider the following collection:
+**Problem:
+Consider the following collection:**
 ~~~
 db.collection.find()
 {
@@ -794,17 +793,55 @@ db.collection.aggregate([
 **Check all answers that apply:**
 
 - **Pipeline 2**  is incorrect since  $divide  cannot operate over field expressions
-
 - **Pipeline 2**  fails because the  $divide  operator only supports numeric types
-
 - **Pipeline 1**  will fail because  $max  can not operator on  _id  field
-
 - **Pipeline 3**  is correct and will execute with no error
-
 - **Pipeline 1**  is incorrect because you cannot use an accumulator expression in a  $match  stage.
 
+*Answer:*
+- **Pipeline 2**  fails because the  $divide  operator only supports numeric types
+- **Pipeline 3**  is correct and will execute with no error
+- **Pipeline 1**  is incorrect because you cannot use an accumulator expression in a  $match  stage.
+
+### Final: Question 3
+
+Problem:
+
+Consider the following collection documents:
+
+db.people.find()
+{ "_id" : 0, "name" : "Bernice Pope", "age" : 69, "date" : ISODate("2017-10-04T18:35:44.011Z") }
+{ "_id" : 1, "name" : "Eric Malone", "age" : 57, "date" : ISODate("2017-10-04T18:35:44.014Z") }
+{ "_id" : 2, "name" : "Blanche Miller", "age" : 35, "date" : ISODate("2017-10-04T18:35:44.015Z") }
+{ "_id" : 3, "name" : "Sue Perez", "age" : 64, "date" : ISODate("2017-10-04T18:35:44.016Z") }
+{ "_id" : 4, "name" : "Ryan White", "age" : 39, "date" : ISODate("2017-10-04T18:35:44.019Z") }
+{ "_id" : 5, "name" : "Grace Payne", "age" : 56, "date" : ISODate("2017-10-04T18:35:44.020Z") }
+{ "_id" : 6, "name" : "Jessie Yates", "age" : 53, "date" : ISODate("2017-10-04T18:35:44.020Z") }
+{ "_id" : 7, "name" : "Herbert Mason", "age" : 37, "date" : ISODate("2017-10-04T18:35:44.020Z") }
+{ "_id" : 8, "name" : "Jesse Jordan", "age" : 47, "date" : ISODate("2017-10-04T18:35:44.020Z") }
+{ "_id" : 9, "name" : "Hulda Fuller", "age" : 25, "date" : ISODate("2017-10-04T18:35:44.020Z") }
+
+ COPY
+
+And the aggregation pipeline execution result:
+
+db.people.aggregate(pipeline)
+{ "_id" : 8, "names" : [ "Sue Perez" ], "word" : "P" }
+{ "_id" : 9, "names" : [ "Ryan White" ], "word" : "W" }
+{ "_id" : 10, "names" : [ "Eric Malone", "Grace Payne" ], "word" : "MP" }
+{ "_id" : 11, "names" : [ "Bernice Pope", "Jessie Yates", "Jesse Jordan", "Hulda Fuller" ], "word" : "PYJF" }
+{ "_id" : 12, "names" : [ "Herbert Mason" ], "word" : "M" }
+{ "_id" : 13, "names" : [ "Blanche Miller" ], "word" : "M" }
+
+ COPY
+
+Which of the following pipelines generates the output result?
+
+**Attempts Remaining:**Correct Answer
+
+Choose the best answer:
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEyMTU4MTAwNjcsLTc2NTczMTc2NSw4NT
-YxMTA5NTIsLTEzMzk2MDA3NzQsLTEzMTIxNTg3MDQsLTgwMTIy
-OTY2NCw0MTYzNzgzMDhdfQ==
+eyJoaXN0b3J5IjpbMTc4NjQwNzA2OSwtNzY1NzMxNzY1LDg1Nj
+ExMDk1MiwtMTMzOTYwMDc3NCwtMTMxMjE1ODcwNCwtODAxMjI5
+NjY0LDQxNjM3ODMwOF19
 -->
