@@ -676,20 +676,21 @@ MongoDB Enterprise Cluster0-shard-0:PRIMARY> db.movies.aggregate(pipeline,{allow
 	- No index operations(create, Update)
 	- No renaming	(immutable)
 	- No mapReduce
-	- No $text	($text can only be used in first stage of a pipeline)
-	- No $geoNear($geoNear can only be used in first stage of a pipeline)
+	- No \$text	(\$text can only be used in first stage of a pipeline)
+	- No \$geoNear(\$geoNear can only be used in first stage of a pipeline)
 	- Collation restrictions	(do not inherit collations of source collection)
 	- find() operation with projection operators not allowed. 
 	- eg.
-	- $
-	- $elemMatch
-	- $slice
-	- $meta
+		- $
+		- $elemMatch
+		- $slice
+		- $meta
 	- View Definitions are public.
 	- Sensitive info must not be referred in view.
-Hor
+- Horizontal slicing performed using $match stage.
+ - Vertical slicing performed using $project or other shaping stage.
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTMyMDIyMjY1LDg1NjExMDk1MiwtMTMzOT
-YwMDc3NCwtMTMxMjE1ODcwNCwtODAxMjI5NjY0LDQxNjM3ODMw
-OF19
+eyJoaXN0b3J5IjpbLTg2ODkxMTA1Nyw4NTYxMTA5NTIsLTEzMz
+k2MDA3NzQsLTEzMTIxNTg3MDQsLTgwMTIyOTY2NCw0MTYzNzgz
+MDhdfQ==
 -->
