@@ -669,7 +669,10 @@ MongoDB Enterprise Cluster0-shard-0:PRIMARY> db.movies.aggregate(pipeline,{allow
 	 -  whenMatched ("**"merge"|"replace"|"keepExisting"|"fail"**)
 
 
+
+- Views
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbODU2MTEwOTUyLC0xMzM5NjAwNzc0LC0xMz
-EyMTU4NzA0LC04MDEyMjk2NjQsNDE2Mzc4MzA4XX0=
+eyJoaXN0b3J5IjpbLTE5MTQyMzc4NjcsODU2MTEwOTUyLC0xMz
+M5NjAwNzc0LC0xMzEyMTU4NzA0LC04MDEyMjk2NjQsNDE2Mzc4
+MzA4XX0=
 -->
