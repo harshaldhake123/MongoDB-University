@@ -671,10 +671,16 @@ MongoDB Enterprise Cluster0-shard-0:PRIMARY> db.movies.aggregate(pipeline,{allow
 
 
 - **Views**
-- No write operations
-- No index operations(c)
+	- No write operations
+	- No index operations(create, Update)()
+	- No renaming
+	- No mapReduce
+	- No $text
+	- No $geoNear
+	- Collation restrictions
+	- find() operation with projection operators not allowed. 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE2NjI5MDYyNzQsODU2MTEwOTUyLC0xMz
-M5NjAwNzc0LC0xMzEyMTU4NzA0LC04MDEyMjk2NjQsNDE2Mzc4
-MzA4XX0=
+eyJoaXN0b3J5IjpbMjA3Njk5NDQ2LDg1NjExMDk1MiwtMTMzOT
+YwMDc3NCwtMTMxMjE1ODcwNCwtODAxMjI5NjY0LDQxNjM3ODMw
+OF19
 -->
