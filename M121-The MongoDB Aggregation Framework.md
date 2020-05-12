@@ -663,12 +663,11 @@ MongoDB Enterprise Cluster0-shard-0:PRIMARY> db.movies.aggregate(pipeline,{allow
 	- Arguments:
 	- into(target collection)
 	- on
-			-  "_id" (if *on* not specified)
+				-  "_id" (if *on* not specified)
 			-  ["_id", "shard key(s)"]
-
-	 - whenNotMatched 
-	 -  whenMatched ("insert")
+	 - whenNotMatched  ("**insert**")
+	 -  whenMatched ("**merge**")
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbODgxMjcwMzcsLTgwMTIyOTY2NCw0MTYzNz
-gzMDhdfQ==
+eyJoaXN0b3J5IjpbLTEzMTIxNTg3MDQsLTgwMTIyOTY2NCw0MT
+YzNzgzMDhdfQ==
 -->
