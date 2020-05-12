@@ -870,10 +870,9 @@ var pipeline = [{
 
 ### Final: Question 4
 
-Problem:
-
-$facet  is an aggregation stage that allows for sub-pipelines to be executed.
-
+**Problem:
+$facet  is an aggregation stage that allows for sub-pipelines to be executed.**
+~~~
 var pipeline = [
   {
     $match: { a: { $type: "int" } }
@@ -898,27 +897,23 @@ var pipeline = [
     }
   }
 ]
+~~~
+**In the above pipeline, which uses  $facet, there are some incorrect stages or/and expressions being used.
+Which of the following statements point out errors in the pipeline?**
 
- COPY
-
-In the above pipeline, which uses  $facet, there are some incorrect stages or/and expressions being used.
-
-Which of the following statements point out errors in the pipeline?
-
-**Attempts Remaining:**Correct Answer
-
-Check all answers that apply:
-
-a  $multiply  expression takes a document as input, not an array.
-
-can not nest a  $facet  stage as a sub-pipeline.
-
-facet_2  uses the output of a parallel sub-pipeline,  facet_1, to compute an expression
-
-$sortByCount  cannot be used within  $facet  stage.
-a  $type  expression does not take a string as its value; only the BSON numeric values can be specified to identify the types.
+**Check all answers that apply:**
+- a  $multiply  expression takes a document as input, not an array.
+- can not nest a  $facet  stage as a sub-pipeline.
+- facet_2  uses the output of a parallel sub-pipeline,  facet_1, to compute an expression
+- $sortByCount  cannot be used within  $facet  stage.
+- a  $type  expression does not take a string as its value; only the BSON numeric values can be specified to identify the types.
+- 
+*Answer:*
+- can not nest a  $facet  stage as a sub-pipeline.
+- facet_2  uses the output of a parallel sub-pipeline,  facet_1, to compute an expression
+ 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTkzNTE0MTU1NSwtNzY1NzMxNzY1LDg1Nj
-ExMDk1MiwtMTMzOTYwMDc3NCwtMTMxMjE1ODcwNCwtODAxMjI5
-NjY0LDQxNjM3ODMwOF19
+eyJoaXN0b3J5IjpbLTE0MzYzNzA2NDksLTc2NTczMTc2NSw4NT
+YxMTA5NTIsLTEzMzk2MDA3NzQsLTEzMTIxNTg3MDQsLTgwMTIy
+OTY2NCw0MTYzNzgzMDhdfQ==
 -->
