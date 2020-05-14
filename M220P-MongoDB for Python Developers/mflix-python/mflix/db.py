@@ -249,44 +249,57 @@ def get_movie(id):
 
         """
         Ticket: Get Comments
-
         Please implement a $lookup stage in this pipeline to find all the
         comments for the given movie. The movie_id in the `comments` collection
         can be used to refer to the _id from the `movies` collection.
-
         Embed the joined comments in a new field called "comments".
         """
 
-        # TODO: Get Comments
-        # Implement the required pipeline.
+        # : Get Comments
+        # implement the required pipeline
         pipeline = [
             {
                 "$match": {
                     "_id": ObjectId(id)
                 }
+            },
+            {
+                "$lookup": {
+                    "from": 'comments',
+                    "let": { 'id': '$_id' },
+                    "pipeline": [
+                        { '$match':
+                            { '$expr': { '$eq': [ '$movie_id', '$$id' ] } }
+                        },
+                        
+                        {
+                            "$sort":{
+                                "date":-1
+                                }
+                        }
+                    ],
+                    "as": 'comments'
+                }
             }
         ]
 
         movie = db.movies.aggregate(pipeline).next()
+        
         return movie
 
     # TODO: Error Handling
-    # If an invalid ID is passed to `get_movie`, it should return None.
+    # if an invalid ID is passed to `get_movie`, it should return None
     except (StopIteration) as _:
 
         """
         Ticket: Error Handling
-
         Handle the InvalidId exception from the BSON library the same way as the
         StopIteration exception is handled. Both exceptions should result in
         `get_movie` returning None.
         """
 
         return None
-
-    except Exception as e:
-        return {}
-
+#
 
 def get_all_genres():
     """
