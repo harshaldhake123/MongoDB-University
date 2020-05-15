@@ -17,6 +17,7 @@ from pymongo.errors import DuplicateKeyError, OperationFailure
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
 from pymongo.read_concern import ReadConcern
+import bson
 
 
 def get_db():
@@ -291,7 +292,7 @@ def get_movie(id):
 
     # TODO: Error Handling
     # if an invalid ID is passed to `get_movie`, it should return None
-    except (StopIteration) as _:
+    except (StopIteration, bson.errors.InvalidId) as e:
 
         """
         Ticket: Error Handling
