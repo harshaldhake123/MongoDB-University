@@ -13,3 +13,14 @@
   * Important Points:
   * Lab 4.1: Equality, Sort, Range
   * Lab 4.2: Aggregation Performance
+- Chapter 5: Performance on Clusters
+  * Important Points:
+- Final Exam
+  * Final: Question 1
+  * Final: Question 2
+  * Final: Question 3
+  * Final: Question 4
+  * Final: Question 5
+  * Final: Question 6
+  * Final: Question 7
+

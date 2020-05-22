@@ -563,3 +563,412 @@ db.restaurants.createIndex( { foobar: 1 } )
 
 > { stars : 1}
 
+
+## Chapter 5: Performance on Clusters
+### Important Points:
+- Performance Considerations in Distributed Systems:
+	- Distributed systems in mongo:
+		- **Replica Cluster**
+		- **Shard Cluster** (horizontal scalability of data)
+		
+	- Considerations when more than one machine is involved:
+		-   Latency
+		-   Data is spread across different nodes (copies of data or different sets of data in different shards)
+		-   Read implications
+		-   Write implications
+	- It is recommended to **use Replica Sets in Production.**
+	- Benefits of replica set include:
+		- Higher availability
+		-   offloading eventual consistency data to secondaries, freeing up primary for operational workload
+		-   having workload configuration where indexes are on secondary nodes
+
+	- **Sharded cluster**
+		- Multiple mongos instances are responsible for routing client application requests to designated nodes.
+		-   Config servers contain mapping of shard cluster - where data sits, and configuration of shard cluster.
+		-   Shard nodes contain application data (databases, collections, indexes)
+		-  major workloads performed here
+		-   Shard nodes are also replica sets
+
+		- Considerations before sharding:
+
+			-   Have we reached limits of vertical scaling?
+			-   Understand how your data grows and how your data is accessed
+			-   Works by defining key based ranges - shard key
+			-   It is important to get a good shard key
+
+		- Sources of Latency in a Shard Cluster
+			-   Client app talks to mongos(s).
+			-   Mongos(s) establish communications with config server to retrieve config information about shard, and with shard nodes to get app-specific data.
+			-   Some latency is also caused by replication mechanism within each shard node.
+
+	- How to minimize latency
+		-   Co-locate mongos within same server as client application to minimize number of network hops to access shard nodes.
+		-   Ensure high bandwidth network connection between mongos and shard nodes.
+
+	- Types of reads in shard cluster
+
+		-   **Scatter Gather**: 
+			- Ping all nodes of shard cluster for info corresponding to a given query.
+			- pay the latency price for asking every single shard node for data.
+			- If not using shard key, then it is forced to do Scatter Gather because mongo cannot determine which shard node has data needed to satisfy client query.
+		-   **Routed Queries**: 
+			- Ask a single shard node, or small amount of shard nodes for data requested by application.
+			- less latency because only talking to one or few shard nodes.
+			- Routed Query is possible when using shard key in queries.  
+			- When shard key is used, mongos knows exactly which shard(s) contain data relevant for this query.
+
+	- Sorting in shard cluster
+		
+		- Sorting involves a few hurdles, but transparent to client application. Mongos routes request to shards containing data. Each shard will perform a sort on its own data locally.
+
+		- After local sort(s) complete, final sort-merge occurs in primary shard, then data is returned to client app.
+		- Similar steps are needed for $limit and $skip - local limit/skip is performed on each shard that contains portion of the data:
+		- When each shard has completed its local limit/skip, final merge of results is performed on primary shard, then results sent back to client app.
+
+- Increasing Write Performance with Sharding
+	- Sometimes, we may have too much data or  throughput for single db to handle. Solution is  _scaling_.
+
+	- **Vertical**
+		
+		-   Server has too few resources (CPU, RAM, I/O).
+		-   We can fix this by buying bigger faster machine with more cpu, ram and disk.
+		-   But there is a limit to how much of these resources one physical machine can have.
+		-   Also, Cost is not linear - buying machine that is 2x as fast, more memory, more disk could be 4x as expensive or more.
+
+	- **Horizontal**
+		-   Increase total number of servers.
+		-   Split workload between many different machines.
+		-   When we reach limit of current setup, add more machines.
+		-   Cost scales linearly with performance requirements because of  buying more of the same machine.
+
+	- **Shard Cluster**
+		
+		-   All reads/writes go via mongos, which must determine which shard to send reads/writes to.
+		-   This is achieved with a shard key, which defines how data partitioned across different machines.
+
+		- Shard key is index field or compound of index fields, must exist in every document in collection.
+		- It is important to have data  _evenly_  distributed across shards, to evenly distribute load across machines.
+
+	- **Shard Key**
+
+		-   Using shard key, data divided into small  _chunks_.
+		-   Each chunk has inclusive lower bound and exclusive upper bound.
+		-   Max chunk size is 64M - when chunk reaches close to this size, it gets split.
+		-   Multiple chunks exist on each cluster.
+
+	- To have write throughput scale linearly with shards, must consider:
+		- Cardinality
+		- Frequency
+		- Rate of Change
+		
+	- **_Cardinality_**:
+
+		-   Number of distinct values for a given shard key.
+		-   The higher the better.
+		-   Determines max number of chunks that can exist in cluster.
+
+		- eg: Building an app that will only be used by those living in new york. If shared on  `address.state`, would only have one chunk - all of new york would go in there, therefore would only have on shard, which defeats the purpose of sharding:
+
+		
+		- If we are unable to use a shard key with high cardinality, we can increase cardinality with a compound shard key. Eg, rather than range of values only on state, have range of values on combination of state and last name:
+	~~~
+	sh.shardCollection('m201.people', {'address.state': 1, last_name: 1})
+	~~~
+	- **_Frequency_**:
+
+		-   Even distribution of each shard key value is good.
+		-   If some values come in more often than others (eg: common last name like "Brow"), won't have even amount of load across cluster, limiting its effectiveness.
+
+
+		- **HOT SHARD**: 
+		-For eg: If most people have last name "Brown", throughput becomes constrained by shard containing those values .
+
+		- **JUMBO CHUNK**:
+			- Chunks containing frequently occurring values will grow larger. 
+			- Usually when chunk is close to its max, will be split. 
+			- BUT if chunk is created where lower and upper bound are the same, this chunk is no longer eligible for splitting.
+
+			- Jumbo chunks reduce effectiveness of horizontal scaling because they cannot be moved between shards.
+
+		- Frequency issue is mitigated with good compound shard key, in this example:
+		~~~
+		sh.shardCollection('m201.people', {'last_name': 1, _id: 1})
+		~~~
+		- Keys at beginning of shard key should have high cardinality, compounding key helps to distribute the frequency of popular values.
+
+	- **_Rate of Change_**:
+
+		-   Consider how shard key value changes over time.
+		-   Avoid monotonically (always increasing or always decreasing) increasing or decreasing values. 
+		- For eg - do not shard ObjectId because newer created ObjectId's are always higher in value than previously created values. 
+		- This will make all writes go to last shard - i.e. shard which contains upper bound of max key.
+		- If shard key was monotonically decreasing, all writes would go to first shard - i.e. shard which contains lower bound of min key.
+
+		- **NOTE**: We can have monotonically increasing value in compound shard key, as long as it's not in the first field, as per this example. Having monotonically increasing value as second key in compound shard key is good -> increases total cardinality since its guaranteed to be unique.
+		~~~
+		sh.shardCollection('m201.people', {'last_name': 1, _id: 1})
+		~~~
+	- Bulk Writes to Shard Cluster
+
+		- We must specify if writes should be ordered or unordered:
+			~~~
+			db.collection.bulkWrite(
+				[
+					<operation 1>,
+					<operation 2>,
+					...
+				],
+				{ordered: <boolean>}
+			)
+			~~~
+
+		- When  `{ordered: true}`, server executes each operation in sequence, waiting for previous operation to succeed before executing next. If any operation fails, process halts and error is reported to client.
+
+		- When  `{ordered: false}`, server can execute all operations in parallel.
+
+		- With sharded cluster, ordered bulk writes can cause performance issues because mongo have to wait for the last operation to complete before next can be executed. 
+		- With replica set, this won't be so bad because all databases on one machine. But in sharded cluster, each shard is on a separate machine so it has more latency waiting for each write to succeed.
+
+		- With unordered bulk write on sharded cluster, all operations can be executed in parallel, getting more benefit of distributed nature of shard cluster.
+
+		- **NOTE**: Mongos must deserialize the multiple write operations to appropriate nodes.
+
+- Reading from Secondaries
+
+	- We can specify a read preference.
+	- By default, it's  `primary`  - all reads/writes go to primary server.
+	- Writes can only be routed to the `primary`
+	~~~
+	db.people.find().readPref("primary")
+	~~~
+	Other readPrefs are:
+	~~~
+	db.people.find().readPref("primary")
+	db.people.find().readPref("primaryPreferred")
+	db.people.find().readPref("secondary") 						// relevant to performance
+	db.people.find().readPref("secondaryPreferred")		// relevant to performance
+	db.people.find().readPref("nearest")							// relevant to performance
+	~~~
+	- If   `readPref("secondary")`, all reads are routed to secondary.
+
+	- If   `readPref("seoncdaryPrefered")`, reads will try to go to secondary, but if none available, routed to primary.
+	- If  `readPref("nearest")`, will read from member that has lowest network latency.
+	
+	- **Eventual Consistency**
+		- When reading from secondary, we might be reading *stale* data because data is asynchronously replicated to secondaries as writes occur on primary.
+
+	- **Strong Consistency**
+		- All writes go to primary, so when reading from primary, guaranteed to be reading latest state of data.
+
+	- When Reading from a Secondary is a **GOOD Idea**
+
+		- Offloading Work
+			- When running analytics/report against data. 
+			
+			- This tends to be resource intensive and long running. We don't want this running on primary because will slow down reads/writes from operational application. 
+			- It is assumed that batch report doesn't expect most up-to-date data anyways so some stale data is fine.
+
+		- Local Reads
+			- Good for geographically distributed replica sets.
+			- For eg - If we have two app servers, one on west coast of US and one on east coast, have one secondary on west coast and another on east coast.
+			
+			- Use  `nearest`  in this case to reduce latency, IF clients are ok with reading stale data.
+	- When Reading from a Secondary is a **BAD Idea**
+
+		-   In general, Secondaries exist to provide high availability, not to increase performance. 
+		- Sharding increases read/write capacity by distributing read/write operations across a group of machines.
+		- We can use this instead of trying to increase performance by reading secondary.
+	-   Providing extra capacity for reads: Misconception is that if primary is overworked with writes, can offload some work by reading from secondary -> FALSE because as writes come in to primary, they're replicated to secondaries, so all members of replica set have roughly same amount of write traffic.
+	-   Reading from secondaries in shard cluster should *not* be done. This may return incomplete or duplicate data due to in progress chunk migrations.
+
+- Replica sets with different indexes
+	- This practice is not usual and offers only a few use cases:
+		1. Specific analytics on secondary nodes
+		2. Reporting on delayed consistency of data
+		3. Text Search 
+	
+		
+	- Requirements for different indexes on replica set:
+		- Prevent such secondary node from becoming primary by setting their priority=0, or set as Hidden Node or simply delayed secondary nodes.
+		- This is because if primary node steps down, then the app will begin communicating with members whose indexes are not designed to serve its queries. This may cause major performance hit.
+
+- Aggregation Pipeline on a Sharded Cluster
+
+	- Eg-1: Where collection is sharded on state, and aggregation is grouping by state.
+
+		- This is relatively easy because all matched restaurants will be located in the same shard. So mongos can route the aggregation query to this shard, shard can compute entire aggregation, and return results to mongos.
+
+	- Eg-2: Where results will be located across multiple shards.
+
+		- In this case, each shard will have to do some computing, then all the individual shard results need to be sent to one place where they can be  _merged_  together.
+
+		- Pipeline needs to be split, mongo determines which stages need to be executed on each shard, and which stages need to be executed on a single shard to merge results.
+
+		Generally merging occurs on a  _random_  shard, except for the following stages that must be merged on the  _primary_  shard:
+
+		-   `$out`
+		-   `$facet`
+		-   `$lookup`
+		-   `$graphLookup`
+
+	- Performance Implication
+
+		- If we run above operations frequently that require merging on primary shard, that shard will receive more load than the others, reducing benefits of horizontal scaling. 
+
+		- We can mitigate this by using better machine (more ram, faster cpu, etc.) for primary shard.
+	- Aggregation Optimizations
+
+	- Server will attempt to optimize aggregation pipeline automatically, whether sharding is present or not.
+
+	- Match before Sort
+
+		- We should move match stage ahead of sort to reduce number of documents that need to be sorted. This is particularly useful with sharding because it reduces the amount of data that need to be transferred across the wire for merging the results to be sorted.
+
+
+## Final Exam
+### Final: Question 1
+**Problem:
+Which of these statements is/are true?**
+
+**Check all answers that apply:**
+
+- Creating an ascending index on a monotonically increasing value creates index keys on the right-hand side of the index tree.
+- Covered queries can sometimes still require some of your documents to be examined.
+- Write concern has no impact on write latency.
+- You can index multiple array fields in a single document with a single compound index.
+- A collection scan has a logarithmic search time.
+
+*Answer:*
+- Creating an ascending index on a monotonically increasing value creates index keys on the right-hand side of the index tree.
+
+
+### Final: Question 2
+
+**Problem:
+Which of the following statements is/are true?**
+
+**Check all answers that apply:**
+
+- It's important to ensure that secondaries with indexes that differ from the primary not be eligible to become primary.
+- Indexes can be walked backwards by inverting their keys in a sort predicate.
+- It's important to ensure that your shard key has high cardinality.
+- Partial indexes can be used to reduce the size requirements of the indexes.
+- Indexes can decrease insert throughput.
+
+*Answer:*
+- It's important to ensure that secondaries with indexes that differ from the primary not be eligible to become primary.
+- Indexes can be walked backwards by inverting their keys in a sort predicate.
+- It's important to ensure that your shard key has high cardinality.
+- Partial indexes can be used to reduce the size requirements of the indexes.
+- Indexes can decrease insert throughput.
+
+### Final: Question 3
+
+**Problem:
+Which of the following statements is/are true?**
+
+**Check all answers that apply:**
+
+- Collations can be used to create case insensitive indexes.
+- By default, all MongoDB user-created collections have an _id index.
+- Background index builds block all reads and writes to the database that holds the collection being indexed.
+- It's common practice to co-locate your  mongos  on the same machine as your application to reduce latency.
+- MongoDB indexes are markov trees.
+
+*Answer:*
+- Collations can be used to create case insensitive indexes.
+- By default, all MongoDB user-created collections have an _id index.
+- It's common practice to co-locate your  mongos  on the same machine as your application to reduce latency.
+
+### Final: Question 4
+
+**Problem:
+Which of the following statements is/are true?**
+
+**Check all answers that apply:**
+
+- Indexes are fast to search because they're ordered such that you can find target values with few comparisons.
+- Under heavy write load you should scale your read throughput by reading from secondaries.
+- When you index on a field that is an array it creates a partial index.
+- On a sharded cluster, aggregation queries using  $lookup  will require a  **merge**  stage on a  **random**  shard.
+- Indexes can solve the problem of slow queries.
+
+*Answer:*
+ - Indexes are fast to search because they're ordered such that you can find target values with few comparisons.
+- Indexes can solve the problem of slow queries.
+
+
+
+### Final: Question 5
+
+**Problem:
+Which of the following statements is/are true?**
+
+**Check all answers that apply:**
+
+- Compound indexes can service queries that filter on a  _prefix_  of the index keys.
+- By default, the  explain()  command will execute your query.
+- If no indexes can be used then a collection scan will be necessary.
+- Compound indexes can service queries that filter on any  _subset_  of the index keys.
+- Query plans are removed from the plan cache on index creation, destruction, or server restart.
+
+*Answer:*
+- Compound indexes can service queries that filter on a  _prefix_  of the index keys.
+- If no indexes can be used then a collection scan will be necessary.
+- Query plans are removed from the plan cache on index creation, destruction, or server restart.
+
+### Final: Question 6
+
+**Problem:
+Which of the following statements is/are true?**
+
+**Check all answers that apply:**
+
+- An index doesn't become multikey until a document is inserted that has an array value.
+- Indexes can only be traversed forward.
+- Running performance tests from the  mongo  shell is an acceptable way to benchmark your database.
+- The ideal ratio between  nReturned  and  totalKeysExamined  is 1.
+- You can use the  --wiredTigerDirectoryForIndexes  option to place your indexes on a different disk than your data.
+
+*Answer:* 
+- An index doesn't become multikey until a document is inserted that has an array value.
+- The ideal ratio between  nReturned  and  totalKeysExamined  is 1.
+- You can use the  --wiredTigerDirectoryForIndexes  option to place your indexes on a different disk than your data.
+
+
+### Final: Question 7
+
+**Problem:
+Given the following indexes:**
+
+1.  `{ categories: 1, price: 1 }`
+2.  `{ in_stock: 1, price: 1, name: 1 }`
+
+**The following documents:**
+
+1. `{ price: 2.99, name: "Soap", in_stock: true, categories: ['Beauty','Personal Care'] }`
+
+2.  `{ price: 7.99, name: "Knife", in_stock: false, categories: ['Outdoors'] }`
+
+**And the following queries:**
+
+1.  `db.products.find({ in_stock: true, price: { $gt: 1, $lt: 5 }  }).sort({  name: 1 })`
+2.  `db.products.find({ in_stock: true })`
+3.  `db.products.find({ categories: 'Beauty'  }).sort({  price: 1 })`
+
+**Which of the following is/are true?**
+
+**Check all answers that apply:**
+
+- Index #1 would provide a sort to query #3.
+- Index #2 can be used by both query #1 and #2.
+- There would be a total of 4 index keys created across all of these documents and indexes.
+- Index #2 properly uses the equality, sort, range rule for query #1.
+
+*Answer:*
+- Index #1 would provide a sort to query #3.
+- Index #2 can be used by both query #1 and #2.
+- Index #2 properly uses the equality, sort, range rule for query #1.
+
+
+ 
