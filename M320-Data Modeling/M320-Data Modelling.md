@@ -1,6 +1,16 @@
 # M320: Data Modeling
 ## Chapter 1: Introduction to Data Modelling
 ### Important Points
+#### Analogy: RDBMS & MongoDB
+*RDBMS* 		| *MongoDB*
+-----------	| -----------
+Entity			| Entity
+Relationship| Relationship
+Database | Database
+**Table** | **Collection**
+**Attribute/Column**	| **Field**
+**Record/Row** | **Document**
+**Join**	| **Embed or Link**
 #### Misconceptions 
 - MongoDB is schemaless so it doesn't matter which fields documents have or how documents differ or no. of collections in a database.
 	- All data has some structure , therefore, schema. MongoDB has flexible data model. Its just that MongoDB has very few rules like being correctly defined in BSON and containing primary key.
@@ -96,3 +106,127 @@ CASE STUDY
 - These differences you observe are needed to adapt the schema design.
 - It is likely that a few CRUD operations will drive your design.
 
+## Chapter 2: Relationships
+### Important Points
+#### Relationships
+- Common Relationships:
+	- one-to-one		(1-1)	(Customer - Customer_id)
+	- one-to-many	(1-N)	(Customer_id - Invoice_id)
+	- many-to-many(N-N)	(Invoice_id - product_id)
+
+#### Modified Notations
+- Crow Foot Notation	
+	- one-to-zillions(Useful in Big Data)
+	![one-to-zillions illustration](https://i.ibb.co/CWdbNQS/Annotation-2020-05-23-201822.png)
+- Numeral Notation
+- minimum
+- most likely, median(most likely should be used)
+- maximum
+
+##### one-to-many
+- An object of a given type is associated with n objects of second type.
+- Eg. A person can have n credit cards but each credit card has one and only one person.
+- Representations:
+	1. Embed 
+		1. in the "one" side
+		2. in the "many" side
+
+		Usually, embedding in entity the most queried.
+	2. References
+		1. in the "one" side
+		2. in the "many" side
+
+		Usually, referencing in the "many" side
+
+	![One-to-Many, embed in the one side](https://i.ibb.co/gZYt40R/Screenshot-40.png)
+	<a href="https://ibb.co/fDv5fq2"><img src="https://i.ibb.co/km1fj5x/Screenshot-41.png" alt="One-to-Many, embed in the many side" border="0"></a>
+<a href="https://ibb.co/4MdQKNf"><img src="https://i.ibb.co/DkpqzKb/Screenshot-42.png" alt="One-to-Many, reference in the one side" border="0"></a>
+<a href="https://ibb.co/xLCMZ1R"><img src="https://i.ibb.co/9g8qPbC/Screenshot-43.png" alt="One-to-Many, reference in the many side" border="0"></a>
+
+##### many-to-many
+- In RDBMS, jump table is used to breakup the many-to-many relationship into two one-many relationships. This does not have to be done with the document model.
+- Representations:
+	1. Embed 
+		1. array of subdocuments in the "many" side
+		2. array of subdocuments in the other "many" side
+
+		Usually, only the most 	queried side is considered.
+	2. References
+		1. array of references in the "many" side
+		2. array of references in the other "many" side
+
+		Usually, referencing in the "many" side
+<a href="https://ibb.co/Zhm7Ycb"><img src="https://i.ibb.co/sFHz6sX/Screenshot-46.png" alt="array of subdocuments in the 'many' side" border="0"></a>
+<a href="https://ibb.co/qj3BwV3"><img src="https://i.ibb.co/XLrXTMr/Screenshot-47.png" alt="array of references in the 'many' side" border="0"></a>
+<a href="https://ibb.co/tZvWV7k"><img src="https://i.ibb.co/XyKvchN/Screenshot-48.png" alt="array of references in the other 'many' side" border="0"></a>
+
+
+- Prefer embedding on the most queried side.
+- Prefer embedding for information that is primarily static over time and may benefit from duplication.
+- Prefer referencing over embedding to avoid managing duplication.
+
+### Lab: Many-to-Many Relationship
+
+**Problem:
+Given the following Collection Relationship Diagram (CRD), identify the relationships that represent Many-to-Many relationships.
+We are asking you to identify not only direct Many-to-Many relationships, but also transitives ones. For example a user has a One-to-Many relationship with its reviews and a One-to-Many relationship with its credit cards, making a Many-to-Many relationship between the reviews and the credit cards.**
+
+![https://university-courses.s3.amazonaws.com/M320/lab_relationship_many-to-many-problem.png](https://university-courses.s3.amazonaws.com/M320/lab_relationship_many-to-many-problem.png)
+
+**Check all answers that apply:**
+
+- **stores.address.street**  and  **items.description**
+- **items.title**  and  **items.reviews.body**
+- **items.sold_at**  and  **items.reviews.body**
+- **users.credit_cards.number**  and  **items.reviews.body**
+- **users.shipping_address.street**  and  **items.reviews.body**
+
+*Answer:*
+- **stores.address.street**  and  **items.description**
+- **items.sold_at**  and  **items.reviews.body**
+- **users.shipping_address.street**  and  **items.reviews.body**
+
+##### one-to-one Relationship
+<a href="https://ibb.co/89xKCBV"><img src="https://i.ibb.co/YhdRCWG/Screenshot-49.png" alt="One-to-one representations" border="0"></a>
+<a href="https://ibb.co/StgPjjP"><img src="https://i.ibb.co/jyYTNNT/Screenshot-50.png" alt="One-to-one : embed,fields at same level" border="0"></a>
+<a href="https://ibb.co/bFh0TdL"><img src="https://i.ibb.co/LrwFmp6/Screenshot-51.png" alt="One-to-one:embed, using subdocuments" border="0"></a>
+<a href="https://ibb.co/2hf9KvZ"><img src="https://i.ibb.co/nm5Gk7P/Screenshot-53.png" alt="One-to-one: reference" border="0"></a>
+<a href="https://ibb.co/jTRpZJC"><img src="https://i.ibb.co/s2HBJWT/Screenshot-55.png" alt="Recap" border="0"></a>
+
+### Lab: One-to-One Relationship
+
+**Problem:
+A legacy database has been ported to MongoDB, resulting in a set of collections that were mapped to their original tables. This port has been quickly identified as a poor solution.
+We have been tasked with redesigning the  **employees**  collection to make better use of the document model to make the information clearer.**
+
+![https://university-courses.s3.amazonaws.com/M320/lab_relationship_one-to-one-problem.png](https://university-courses.s3.amazonaws.com/M320/lab_relationship_one-to-one-problem.png)
+
+**While we are restructuring the database, the Human Resources department would like us to move any confidential employee information to a different collection to make the information easier to protect.**
+**Consider the following potential schema designs. Each of these designs represents an individual employee and the One-to-One relationship between all of their fields.**
+**The ideal schema design should store:**
+-   **address information together as an embedded sub-document**
+-   **all of an employee's phone numbers together as an embedded sub-document**
+-   **all salary and bonus compensation information together as an embedded sub-document**
+-   **all confidential information in a separate collection
+Once you've identified the ideal design, you can deepen your knowledge by trying to explain why each of the other options is not the preferred design choice.**
+
+**Choose the best answer:**
+1.  
+![https://university-courses.s3.amazonaws.com/M320/lab_relationship_one-to-one-answer-1.png](https://university-courses.s3.amazonaws.com/M320/lab_relationship_one-to-one-answer-1.png)
+2. 
+![https://university-courses.s3.amazonaws.com/M320/lab_relationship_one-to-one-answer-2.png](https://university-courses.s3.amazonaws.com/M320/lab_relationship_one-to-one-answer-2.png)
+3. 
+![https://university-courses.s3.amazonaws.com/M320/lab_relationship_one-to-one-answer-5.png](https://university-courses.s3.amazonaws.com/M320/lab_relationship_one-to-one-answer-5.png)
+4. 
+![https://university-courses.s3.amazonaws.com/M320/lab_relationship_one-to-one-answer-3.png](https://university-courses.s3.amazonaws.com/M320/lab_relationship_one-to-one-answer-3.png)
+
+![https://university-courses.s3.amazonaws.com/M320/lab_relationship_one-to-one-answer-4.png](https://university-courses.s3.amazonaws.com/M320/lab_relationship_one-to-one-answer-4.png)
+
+*Answer:*
+
+![https://university-courses.s3.amazonaws.com/M320/lab_relationship_one-to-one-answer-1.png](https://university-courses.s3.amazonaws.com/M320/lab_relationship_one-to-one-answer-1.png)
+
+##### One-to-Zillion 
+<a href="https://ibb.co/D9Nnt65"><img src="https://i.ibb.co/QPZGfqr/Screenshot-56.png" alt="One-to-zillion Representation" border="0"></a>
+<a href="https://ibb.co/vqjSDqy"><img src="https://i.ibb.co/YQLxbQn/Screenshot-58.png" alt="One-to-zillion:reference, in the zillion side" border="0"></a>
+<a href="https://ibb.co/rkt9FmJ"><img src="https://i.ibb.co/K6GnbXH/Screenshot-59.png" alt="Recap" border="0"></a>
