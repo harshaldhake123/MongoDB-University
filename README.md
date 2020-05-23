@@ -1,3 +1,5 @@
+## MongoDB University Classes
+- This repository contains my course notes, Lab solutions and Final Exam answers for all the courses that I completed.
 ### Course Completion Certificate:
 
 ## M001: MongoDB Basics
