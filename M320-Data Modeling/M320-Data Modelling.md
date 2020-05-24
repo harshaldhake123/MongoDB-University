@@ -230,3 +230,376 @@ Once you've identified the ideal design, you can deepen your knowledge by trying
 <a href="https://ibb.co/D9Nnt65"><img src="https://i.ibb.co/QPZGfqr/Screenshot-56.png" alt="One-to-zillion Representation" border="0"></a>
 <a href="https://ibb.co/vqjSDqy"><img src="https://i.ibb.co/YQLxbQn/Screenshot-58.png" alt="One-to-zillion:reference, in the zillion side" border="0"></a>
 <a href="https://ibb.co/rkt9FmJ"><img src="https://i.ibb.co/K6GnbXH/Screenshot-59.png" alt="Recap" border="0"></a>
+
+
+## Chapter 3: Patterns (Part-1)
+### Important Points
+- Concerns with applying Patterns:
+	- Duplication
+		- duplicating data across documents
+	- Data Staleness
+		- accepting staleness in some pieces of data
+	- Data integrity Issues
+		- writing extra application side logic to ensure referential integrity
+
+#### Duplication
+- Why Duplication?
+	- Result of embedding information in a given document for faster access
+- Concern
+	- Challenge for correctness and consistency
+##### Case-1: Where duplicating information is better than not doing it.
+	
+- Let's link orders of products to the address of the customer that placed the order by using a reference to a customer document.
+- Updating the address for this customer updates information for the already fulfilled shipments, order that have been already delivered to the customer. This is not the desired behavior.
+- The shipments were made to the customer's address at that point in time, either when the order was made or before the customer changed their address.
+- So the address reference in a given order is unlikely to be changed.
+- Embedding a copy of the address within the shipment document will ensure we keep the correct value.
+- When the customer moves, we add another shipping address on file.
+- Using this new address for new orders, does not affect the already shipped orders. 
+##### Case-2: When the copy data does not ever change.
+
+- Let's say we want to model movies and actors.
+- Movies have many actors and actors play in many movies.
+- So this is a typical many-to-many relationship.
+- Avoiding duplication in a many-to-many relationship requires us to keep two collections and create references between the documents in the two collections.
+- If we list the actors in a given movie document, we are creating duplication.
+- However, once the movie is released, the list of actors does not change.
+- So duplication on this unchanging information is also perfectly acceptable. 
+
+#####  Case-3: Information that needs to or may change with time.
+
+- Let's use the revenues for a given movie, which is stored within the movie, and the revenues earned per screening.
+- Oh, yeah, with said duplication add to be a single value in two locations.
+- In this case, we have duplication between the sum store in the movie document and the revenue store in the screening documents used to compute the total sum.
+- This type of situation, where we must keep multiple values in sync over time, makes us ask the question is the benefit of having this sum precomputed surpassing the cost and trouble of keeping it in sync?
+- If yes, then use this computed pattern.
+- If not, don't use it.
+- Here, if we want the sum to be synchronized, it may be the responsibility of the application to keep it in sync.
+- Meaning, whenever the application writes a new document to the collection or updates the value of an existing document, it must update the sum.
+- Alternatively, we could add another application or job to do it.
+
+#### Data Staleness
+- Staleness is about facing a piece of data to a user that may have been out of date.
+- Why staleness?
+	- New events come along at such a fast rate that updating data constantly can cause performance issues.
+- Concern
+	- Data quality and reliability.
+
+- A common a way to refresh stale data is to use a Change Stream to see what has changed in some documents and derive a list of dependent piece of data to be updated.
+- **Change Stream**'s a new application to access and respond to data changes, either in real time or in a delayed mode.
+#### Referential Integrity
+- Why Referential Integrity?
+	- Linking information between documents or tables.
+	- No support for cascading deletes.
+- Concern?
+		- Challenge for correctness and consistency
+	
+#### Attribute Pattern
+- Example-1
+	<a href="https://ibb.co/C5cVp9h"><img src="https://i.ibb.co/vxFLCdZ/Screenshot-62.png" alt="Using Attribute pattern" border="0"></a>
+	- To search effectively on one of all product fields, you need an index.
+	- For example, searching on the capacity for my battery would require an index.
+	- Searching on the voltage output of my battery would also require an index.
+	- If you have tons of fields, you may have a lot of indexes.
+For this case you want to use the attribute pattern.
+	- To use the attribute pattern you start by identifying the list of fields you want to transpose.
+	- Here we transpose the fields input, output, and capacity.
+	- Then for each field in associated value, we create that pair.
+	- The name of the keys for those pairs do not matter.
+
+- Example-2
+	- Here's an example in which we keep track of the dates when a movie was released in the USA, in Mexico, and France, and when it appears in the San Jose movie festival.
+	- One thing to observe with those fields is that they share the same type of value.
+	- In this case, the type, date - more conceptually, a release date.
+	- What if we want to find all the movies released between two dates across all countries?
+	- Using the attribute pattern and transforming the release dates to an array of field pairs, we can change the query to this.
+	<a href="https://ibb.co/w43tQmT"><img src="https://i.ibb.co/0r859bk/Screenshot-60.png" alt="Fields sharing common characteristics" border="0"></a>
+
+- Recap
+<a href="https://ibb.co/MS328FJ"><img src="https://i.ibb.co/DWSVG0j/Screenshot-61.png" alt="Attribute Pattern" border="0"></a>
+
+
+### Lab: Apply the Attribute Pattern
+
+**Problem:
+	User Story:
+The museum we work at has grown from a local attraction to one that is seen as having very popular items.
+For this reason, other museums in the World have started exchanging pieces of art with our museum.
+Our database was tracking if our pieces are on display and where they are in the museum.
+To track the pieces we started exchanging with other museum, we added an array called  events, in which we created an entry for each date a piece was loaned and the museum it was loaned to.**
+
+    {
+      "_id": ObjectId("5c5348f5be09bedd4f196f18"),
+      "title": "Cookies in the sky",
+      "artist": "Michelle Vinci",
+      "date_acquisition": ISODate("2017-12-25T00:00:00.000Z"),
+      "location": "Blue Room, 20A",
+      "on_display": false,
+      "in_house": false,
+      "events": [{
+        "moma": ISODate("2019-01-31T00:00:00.000Z"),
+        "louvres": ISODate("2020-01-01T00:00:00.000Z")
+      }]
+    }
+**The problem with this design is that we need to build a new index every time there is a new museum with which we start exchanging pieces. For example, when we started working with The Prado in Madrid, we needed to add this index:**
+
+    { "events.prado" : 1 }
+
+----------
+
+**Task**
+
+**To address this issue, you've decided to change the schema to:**
+
+-   **use a single index on all event dates.**
+-   **transform the field that tracks the date when a piece was acquired,  date_acquisition, so that it is also indexed with the values above.
+To ensure the validator can verify your solution, use "k" and "v" as field names if needed.**
+
+**To complete this lab:**
+
+-   **Modify the following schema to incorporate the above changes:**
+~~~    
+{
+  "_id": "<objectId>",
+  "title": "<string>",
+  "artist": "<string>",
+  "date_acquisition": "<date>",
+  "location": "<string>",
+  "on_display": "<bool>",
+  "in_house": "<bool>",
+  "events": [{
+    "moma": "<date>",
+    "louvres": "<date>"
+  }]
+}
+~~~   
+-   **Save your new schema to a file named**  **pattern_attribute.json**.
+    
+-   **Validate your answer on  _Windows_  by running in the  **CMD**  **shell:****
+    ~~~
+    validate_m320 pattern_attribute --file pattern_attribute.json
+    ~~~
+-   **Validate your answer on  _MacOS_  and  _Linux_  by running:**
+    ~~~
+    ./validate_m320 pattern_attribute --file pattern_attribute.json
+    ~~~
+**After running this script you will either be given a validation code or an error message indicating what might be missing in your file.
+When you get the validation code, paste it in the text box below and click the submit button**
+
+*Answer:*
+~~~
+{
+  "_id": "<objectId>",
+  "title": "<string>",
+  "artist": "<string>",
+  "location": "<string>",
+  "on_display": "<bool>",
+  "in_house": "<bool>",
+  "events": [
+    {"k":"<string>", "v":"<date>"},
+    {"k":"<string>", "v":"<date>"}
+  ]
+}
+~~~
+> Validation Code
+
+
+#### Extended Reference Pattern
+<a href="https://ibb.co/VHR9ZsG"><img src="https://i.ibb.co/pWcw8ST/Screenshot-65.png" alt="Extended Reference Pattern" border="0"></a>
+<a href="https://ibb.co/3hZCwYs"><img src="https://i.ibb.co/GPS5X3J/Screenshot-66.png" alt="Managing Duplication" border="0"></a>
+<a href="https://ibb.co/fCGvGfD"><img src="https://i.ibb.co/kh616jm/Screenshot-68.png" alt="Extended Reference for Many-to-one relationship" border="0"></a><br /><a target='_blank' href='https://imgbb.com/'></a><br />
+
+
+
+#### Subset Pattern
+- If working set is too big, then...
+	- Add RAM
+	- Scale with Sharding
+	- Reduce the size of **working set**
+
+-  There are some information that we don't need to use that often in our documents.
+- For example, in a movies collection, most of the time users want to see the top actors and the top reviews, rather than all of them.
+- As for the fields like comments, quote, and release-- it's also unlikely that you need all of them, most of the time.
+- We could keep only 20 of the cast members, the main actors-- and also 20 of each of those comments, quote, release, and reviews.
+- The rest of the information can go into a separate collection.
+- It means if you start with a document that has all the info in it, a field that has a **one-to-one relationship**-- for example, the full script-- could be moved to a new collection. And you could access this information through the  $lookup operator.
+- As for a field that has a **one-to-N** relationship, you can move most of those objects to another collection and keep only a subset of the N relationship in the main document.
+- The result on the working set is that each document has been split into the part that is frequently accessed and the part that is rarely accessed.
+- Now that the documents are smaller, the whole working set can fit in memory.
+- And we have additional memory to bring in the data we only need to rotate.
+
+<a href="https://ibb.co/vk5F1DJ"><img src="https://i.ibb.co/kXn7KMh/Screenshot-69.png" alt="Subset Pattern Recap" border="0"></a>
+
+
+### Lab: Apply the Subset Pattern
+**Problem:
+You are the lead developer for an online organic recycled clothing store. Consider the following user story:**
+
+**User Story:**
+
+**Due to the growing number of environmentally-conscious consumers, our store's inventory has increased exponentially. We now also have an increasingly large pool of makers and suppliers.
+We recently found that our shopping app is getting slower due to the fact that the frequently-used documents can no longer all fit in RAM. This is happening largely due to having all product reviews, questions, and specs stored in the same document, which grows in size as reviews and ratings keep coming in.
+To resolve this issue, we want to reduce the amount of data immediately available to the user in the app and only load additional data when the user asks for it.
+Currently a typical document in our data base looks like this:**
+~~~
+{
+  "_id": ObjectId("5c9be463f752ec6b191c3c7e"),
+  "item_code": "AS45OPD",
+  "name": "Recycled Kicks",
+  "maker_brand": "Shoes From The Gutter",
+  "price": 100.00,
+  "description": "These amazing Kicks are made from recycled plastics and
+  fabrics.They come in a variety of sizes and are completely unisex in design.
+  If your feet don't like them within the first 30 days, we'll return your
+  money no questions asked.
+  ",
+  "materials": [
+    "recycled cotton",
+    "recycled plastic",
+    "recycled food waste",
+  ],
+  "country": "Russia",
+  "image": "https:///www.shoesfromthegutter.com/kicks/AS45OPD.img",
+  "available_sizes": {
+      "mens": ["5", "6", "8", "8W", "10", "10W", "11", "11W", "12", "12W"],
+      "womens": ["5", "6", "7", "8", "9", "10", "11", "12"]
+  },
+  "package_weight_kg": 2.00,
+  "average_rating": 4.8,
+  "reviews": [{
+      "author": "i_love_kicks",
+      "text": "best shoes ever! comfortable, awesome colors and design!",
+      "rating": 5
+    },
+    {
+      "author": "i_know_everything",
+      "text": "These shoes are no good because I ordered the wrong size.",
+      "rating": 1
+    },
+    "..."
+  ],
+  "questions": [{
+      "author": "i_love_kicks",
+      "text": "Do you guys make baby shoes?",
+      "likes": 1223
+    },
+    {
+      "author": "i_know_everything",
+      "text": "Why do you make shoes out of garbage?",
+      "likes": 0
+    },
+    "..."
+  ],
+  "stock_amount": 10000,
+  "maker_address": {
+    "building_number": 7,
+    "street_name": "Turku",
+    "city": "Saint-Petersburg",
+    "country": "RU",
+    "postal_code": 172091
+  },
+  "makers": ["Ilya Muromets", "Alyosha Popovich", "Ivan Grozniy", "Chelovek Molekula"],
+}
+~~~
+----------
+
+**Task**
+
+**To address this user story, you must modify the following schema so that the working set can fit in RAM:**
+~~~
+{
+  "_id": "<objectId>",
+  "item_code": "<string>",
+  "name": "<string>",
+  "maker_brand": "<string>",
+  "price": "<decimal>",
+  "description": "<string>",
+  "materials": ["<string>"],
+  "country": "<string>",
+  "image": "<string>",
+  "available_sizes": {
+    "mens": ["<string>"],
+    "womens": ["<string>"]
+  },
+  "package_weight_kg": "<decimal>",
+  "average_rating": "<decimal>",
+  "reviews": [{
+    "author": "<string>",
+    "text": "<string>",
+    "rating": "<int>"
+  }],
+  "questions": [{
+    "author": "<string>",
+    "text": "<string>",
+    "likes": "<int>"
+  }],
+  "stock_amount": "<int>",
+  "maker_address": {
+    "building_number": "<string>",
+    "street_name": "<string>",
+    "city": "<string>",
+    "country": "<string>",
+    "postal_code": "<string>"
+  },
+  "makers": ["<string>"]
+}
+~~~
+
+**You should accomplish this task by completing the following steps:**
+
+-   **Remove the the maker address and the list of makers from the schema with the intention of moving those pieces of information to a separate collection.**
+    
+-   **Replace the  reviews  and  questions  fields with  top_five_reviews  and  top_five_questions  respectively.**
+    
+-   **Save your modified schema to a file named  **pattern_subset.json**.**
+    
+-   **Validate your answer on  _Windows_  by running in the  **CMD**  shell:**
+~~~    
+validate_m320 pattern_subset --file pattern_subset.json
+~~~
+ 
+-   **Validate your answer on  _MacOS_  and  _Linux_  by running:**
+~~~    
+./validate_m320 pattern_subset --file pattern_subset.json
+~~~
+**After running this script you will either be given a validation code or an error message indicating what might be missing in your file.
+When you get the validation code, paste it in the text box below and click submit.**
+
+**Enter answer here:**
+~~~
+{
+    "_id": "<objectId>",
+    "item_code": "<string>",
+    "name": "<string>",
+    "maker_brand": "<string>",
+    "price": "<decimal>",
+    "description": "<string>",
+    "materials": [
+        "<string>"
+    ],
+    "country": "<string>",
+    "image": "<string>",
+    "available_sizes": {
+        "mens": [
+            "<string>"
+        ],
+        "womens": [
+            "<string>"
+        ]
+    },
+    "package_weight_kg": "<decimal>",
+    "average_rating": "<decimal>",
+    "top_five_reviews": [{
+        "author": "<string>",
+        "text": "<string>",
+        "rating": "<int>"
+    }],
+    "top_five_questions": [{
+        "author": "<string>",
+        "text": "<string>",
+        "likes": "<int>"
+    }],
+    "stock_amount": "<int>"
+}
+~~~
+> Validation Code

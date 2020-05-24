@@ -24,3 +24,17 @@
         * one-to-one Relationship
     + Lab: One-to-One Relationship
         * One-to-Zillion
+  * Chapter 3: Patterns 
+    + Important Points
+      - Duplication
+        * Case-1: Where duplicating information is better than not doing it.
+        * Case-2: When the copy data does not ever change.
+        * Case-3: Information that needs to or may change with time.
+      - Data Staleness
+      - Referential Integrity
+      - Attribute Pattern
+    + Lab: Apply the Attribute Pattern
+      - Extended Reference Pattern
+      - Subset Pattern
+    + Lab: Apply the Subset Pattern
+
