@@ -1,3 +1,5 @@
+## MongoDB University Classes
+- This repository contains my course notes, Lab solutions and Final Exam answers for all the courses that I completed.
 ### Course Completion Certificate:
 
 ## M001: MongoDB Basics
@@ -18,3 +20,5 @@
 #### http://university.mongodb.com/course_completion/bb129347-2d11-4bc1-8754-bce57804e3e0
 
 
+## M320: Data Modeling
+#### http://university.mongodb.com/course_completion/1635f697-a781-4138-8c33-04664edc2e41

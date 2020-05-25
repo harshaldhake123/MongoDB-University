@@ -1,3 +1,4 @@
+## Table of Contents
 - M201: MongoDB Performance
 - Chapter 1: Introduction
   * Important Points
@@ -24,3 +25,4 @@
   * Final: Question 6
   * Final: Question 7
 
+## <a href='http://university.mongodb.com/course_completion/bb129347-2d11-4bc1-8754-bce57804e3e0'>M201 - Course Completion Certificate</a>
