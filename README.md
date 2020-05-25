@@ -1,5 +1,7 @@
 ## MongoDB University Classes
 - This repository contains my course notes, Lab solutions and Final Exam answers for all the courses that I completed.
+- **Please do not fork or copy this repository.** 
+- These courses are available free of cost on [MongoDB University](https://university.mongodb.com/) website and can be completed with a small amount of study every week.
 ### Course Completion Certificate:
 
 ## M001: MongoDB Basics
