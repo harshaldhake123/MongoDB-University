@@ -1,6 +1,32 @@
-## M201: MongoDB Performance
-## Chapter 1: Introduction
-### Important Points
+## M201 - MongoDB Performance
+
+- [Chapter 1 - Introduction](#chapter-1---introduction)
+  * [Points to Remember](#points-to-remember)
+  * [Lab 1.1 - Install Course Tools and Datasets](#lab-11---install-course-tools-and-datasets)
+- [Chapter 2 - MongoDB Indexes](#chapter-2---mongodb-indexes)
+  * [Points to Remember](#points-to-remember-1)
+  * [Lab 2.1 - Using Indexes to Sort](#lab-21---using-indexes-to-sort)
+  * [Lab 2.2 - Optimizing Compound Indexes](#lab-22---optimizing-compound-indexes)
+- [Chapter 3 - Index Operations](#chapter-3---index-operations)
+  * [Points to Remember](#points-to-remember-2)
+  * [Lab 3.1 - Explain Output](#lab-31---explain-output)
+- [Chapter 4 - CRUD Optimization](#chapter-4---crud-optimization)
+  * [Points to Remember](#points-to-remember-3)
+  * [Lab 4.1 - Equality, Sort, Range](#lab-41---equality--sort--range)
+  * [Lab 4.2 - Aggregation Performance](#lab-42---aggregation-performance)
+- [Chapter 5 - Performance on Clusters](#chapter-5---performance-on-clusters)
+  * [Points to Remember](#points-to-remember-4)
+- [Final Exam](#final-exam)
+  * [Final - Question 1](#final---question-1)
+  * [Final - Question 2](#final---question-2)
+  * [Final - Question 3](#final---question-3)
+  * [Final - Question 4](#final---question-4)
+  * [Final - Question 5](#final---question-5)
+  * [Final - Question 6](#final---question-6)
+  * [Final - Question 7](#final---question-7)
+
+## Chapter 1 - Introduction
+### Points to Remember
 - MongoDB has search engines that are either very dependent on RAM or completely in memory execution modes.
 	- Operations that rely heavily on RAM:
 		- Aggregation
@@ -20,7 +46,7 @@
 	-Writing constantly to same document will require each write to block all other writes on same document to comply. In such cases multiple CPUs do not help in performance because threads can't do their work in parallel.
 
 
-### Lab 1.1: Install Course Tools and Datasets
+### Lab 1.1 - Install Course Tools and Datasets
 
 **Problem: 
 Welcome to your first lab in M201!
@@ -40,8 +66,8 @@ To confirm that you've successfully completed the required steps to follow the c
 
 
 
-## Chapter 2: MongoDB Indexes
-### Important Points
+## Chapter 2 - MongoDB Indexes
+### Points to Remember
 - Data Storage on Disk:
 	- Indexes in MongoDB are stored in b-tree that can be used to find target values with very few comparisons.
 	- We can get awesome performance gain using indexes however, this comes with some drawbacks. 
@@ -163,7 +189,7 @@ To confirm that you've successfully completed the required steps to follow the c
 		-   The specified query field is never an array. 
 
 
-### Lab 2.1: Using Indexes to Sort
+### Lab 2.1 - Using Indexes to Sort
 **Problem:
 In this lab you're going to determine which queries are able to successfully use a given index for both filtering and sorting.**
 
@@ -199,7 +225,7 @@ db.people.find({ "first_name": "Jessica"  }).sort({  "address.state": 1, "addres
 ~~~
 db.people.find({ "first_name": "Jessica", "address.state": { $lt: "S"}  }).sort({  "address.state": 1 })
 ~~~
-### Lab 2.2: Optimizing Compound Indexes
+### Lab 2.2 - Optimizing Compound Indexes
 
 **Problem:
 In this lab you're going to examine several example queries and determine which compound index will best service them.**
@@ -254,8 +280,8 @@ In this lab you're going to examine several example queries and determine which 
 { "address.state": 1, "last_name": 1, "job": 1 }
 ~~~
 
-## Chapter 3: Index Operations
-### Important Points:
+## Chapter 3 - Index Operations
+### Points to Remember
 - Building Indexes:
 	- **Foreground index build**, which was the most performant but had the side effect of locking the entire database for the duration of the index build. This meant that you could **neither read from or write to** the database for the duration of the index build.
 
@@ -381,7 +407,7 @@ In this lab you're going to examine several example queries and determine which 
 	-   Local laptop to run tests (use a server)
 	-   Using default MongoDB parameters (use production settings - eg authentication, high availability)
 
-### Lab 3.1: Explain Output
+### Lab 3.1 - Explain Output
 
 **Problem:
 In this lab you're going to determine which index was used to satisfy a query given its explain output.
@@ -457,8 +483,8 @@ The following query was ran:**
 { "address.state": 1, "stars": 1, "name": 1 }
 ~~~
 
-## Chapter 4: CRUD Optimization
-### Important Points:
+## Chapter 4 - CRUD Optimization
+### Points to Remember
 - Equality, Sort, Range Thumb rule:
 	- At the beginning of our index, we should match on **equality** conditions in the query predicate, followed by **sort** conditions, and finally **range** conditions; equality, sort, range.
 - Covered Queries:
@@ -495,7 +521,7 @@ The following query was ran:**
 	- Output of an  aggregation pipeline has a size limit of 16megabytes. However, this limit does not apply to documents as they flow through the pipeline.
 
 
-### Lab 4.1: Equality, Sort, Range
+### Lab 4.1 - Equality, Sort, Range
 
 **Problem:
 In this lab you're going to use the equality, sort, range rule to determine which index best supports a given query.
@@ -523,7 +549,7 @@ Given the following query:**
 ~~~
 { city: 1, lastName: 1, firstName: 1, accountBalance: 1 }
 ~~~
-### Lab 4.2: Aggregation Performance
+### Lab 4.2 - Aggregation Performance
 
 **Problem:
 For this lab, you're going to create an index so that the following aggregation query can be executed successfully.
@@ -564,8 +590,8 @@ db.restaurants.createIndex( { foobar: 1 } )
 > { stars : 1}
 
 
-## Chapter 5: Performance on Clusters
-### Important Points:
+## Chapter 5 - Performance on Clusters
+### Points to Remember
 - Performance Considerations in Distributed Systems:
 	- Distributed systems in mongo:
 		- **Replica Cluster**
@@ -826,7 +852,7 @@ db.restaurants.createIndex( { foobar: 1 } )
 
 
 ## Final Exam
-### Final: Question 1
+### Final - Question 1
 **Problem:
 Which of these statements is/are true?**
 
@@ -842,7 +868,7 @@ Which of these statements is/are true?**
 - Creating an ascending index on a monotonically increasing value creates index keys on the right-hand side of the index tree.
 
 
-### Final: Question 2
+### Final - Question 2
 
 **Problem:
 Which of the following statements is/are true?**
@@ -862,7 +888,7 @@ Which of the following statements is/are true?**
 - Partial indexes can be used to reduce the size requirements of the indexes.
 - Indexes can decrease insert throughput.
 
-### Final: Question 3
+### Final - Question 3
 
 **Problem:
 Which of the following statements is/are true?**
@@ -880,7 +906,7 @@ Which of the following statements is/are true?**
 - By default, all MongoDB user-created collections have an _id index.
 - It's common practice to co-locate your  mongos  on the same machine as your application to reduce latency.
 
-### Final: Question 4
+### Final - Question 4
 
 **Problem:
 Which of the following statements is/are true?**
@@ -899,7 +925,7 @@ Which of the following statements is/are true?**
 
 
 
-### Final: Question 5
+### Final - Question 5
 
 **Problem:
 Which of the following statements is/are true?**
@@ -917,7 +943,7 @@ Which of the following statements is/are true?**
 - If no indexes can be used then a collection scan will be necessary.
 - Query plans are removed from the plan cache on index creation, destruction, or server restart.
 
-### Final: Question 6
+### Final - Question 6
 
 **Problem:
 Which of the following statements is/are true?**
@@ -936,7 +962,7 @@ Which of the following statements is/are true?**
 - You can use the  --wiredTigerDirectoryForIndexes  option to place your indexes on a different disk than your data.
 
 
-### Final: Question 7
+### Final - Question 7
 
 **Problem:
 Given the following indexes:**

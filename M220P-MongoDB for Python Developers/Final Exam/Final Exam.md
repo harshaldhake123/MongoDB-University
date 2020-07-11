@@ -1,6 +1,18 @@
+# M220P-MongoDB for Python Developers
+## Table of Contents
+- [Final Exam](#final-exam)
+  * [Final - Question 1](#final---question-1)
+  * [Final - Question 2](#final---question-2)
+  * [Final - Question 3](#final---question-3)
+  * [Final - Question 4](#final---question-4)
+  * [Final - Question 5](#final---question-5)
+  * [Final - Question 6](#final---question-6)
+  * [Final - Question 7](#final---question-7)
+
+
 ## Final Exam
 
-### Final: Question 1
+### Final - Question 1
 
 **Problem:
 Assume a collection called elections that holds data about all United States Presidential Elections since 1789. All the documents in the elections collection look like this:**
@@ -56,7 +68,7 @@ db.elections.find( { "winner_party": "Republican","winner_electoral_votes": { "$
 ~~~
 
 
-### Final: Question 2
+### Final - Question 2
 
 **Problem:
 Consider a collection of phones called  phones, used by a phone manufacturer to keep track of the phones currently in production.
@@ -116,7 +128,7 @@ db.phones.update_many( { "software_version": { "$gt": 4.0 } },
 db.phones.update_many( { "software_version": { "$lt": 4.0 } },
                        { "$set": { "needs_to_update": True } } )
 ~~~
-### Final: Question 3
+### Final - Question 3
 **Problem:**
 **Suppose an instance of  MongoClient  is created with the  _default settings_:**
 
@@ -151,7 +163,7 @@ Database(MongoClient(host=['m220-lessons-shard-00-02-mcxlm.mongodb.net:27017',  
 ~~~
 Database(MongoClient(host=['m220-lessons-shard-00-02-mcxlm.mongodb.net:27017',  'm220-lessons-shard-00-00-mcxlm.mongodb.net:27017',  'm220-lessons-shard-00-01-mcxlm.mongodb.net:27017'], document_class=dict, tz_aware=False, connect=True, authsource='admin',  replicaset='m220-lessons-shard-0', ssl=True), 'stats')
 ~~~
-### Final: Question 4
+### Final - Question 4
 **Problem:
 Suppose a client application is sending writes to a replica set with 3 nodes:**
 
@@ -172,7 +184,7 @@ What Write Concern was used in this operation?**
 - w: majority
 
 
-### Final: Question 5
+### Final - Question 5
 
 **Problem:
 Given the following bulk write statement, to a collection called  employees:**
@@ -204,7 +216,7 @@ Which of the insert operations in  requests  will succeed?**
 - Insert #3
 
 
-### Final: Question 6
+### Final - Question 6
 
 **Problem:
 Suppose a client application is sending writes to a replica set with three nodes, but the primary node stops responding:**
@@ -225,7 +237,7 @@ After 30 seconds, the client still cannot connect to a new primary. Which of the
 - ServerSelectionTimeoutError
 
 
-### Final: Question 7
+### Final - Question 7
 
 **Problem:
 Assume a collection called  people_heights  with documents that look like this:**

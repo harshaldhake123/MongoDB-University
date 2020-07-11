@@ -1,10 +1,40 @@
 
 # M121 - The MongoDB Aggregation Framework
 
+## Table of Contents:
+  * [Aggregation Framework](#aggregation-framework)
+- [Chapter 1 - Basic Aggregation - $match and $project](#chapter-1---basic-aggregation----match-and--project)
+  * [Points to remember](#points-to-remember)
+  * [Lab - $match](#lab----match)
+  * [Lab - Changing Document Shape with $project](#lab---changing-document-shape-with--project)
+  * [Lab - Computing Fields](#lab---computing-fields)
+  * [Optional Lab - Expressions with $project](#optional-lab---expressions-with--project)
+- [Chapter 2 - Basic Aggregation - Utility Stages](#chapter-2---basic-aggregation---utility-stages)
+  * [Points to remember](#points-to-remember-1)
+  * [Lab - Using Cursor-like Stages](#lab---using-cursor-like-stages)
+  * [Lab - Bringing it all together](#lab---bringing-it-all-together)
+- [Chapter 3 - Core Aggregation - Combining Information](#chapter-3---core-aggregation---combining-information)
+  * [Points to remember](#points-to-remember-2)
+  * [Lab - $group and Accumulators](#lab----group-and-accumulators)
+  * [Lab - $unwind](#lab----unwind)
+  * [Lab - Using $lookup](#lab---using--lookup)
+  * [Lab - $graphLookup](#lab----graphlookup)
+- [Chapter 4 - Core Aggregation - Multidimensional Grouping](#chapter-4---core-aggregation---multidimensional-grouping)
+  * [Lab - $facets](#lab----facets)
+- [Chapter 5 - Miscellaneous Aggregation](#chapter-5---miscellaneous-aggregation)
+- [Final Exam](#final-exam)
+  * [Final - Question 1](#final---question-1)
+  * [Final - Question 2](#final---question-2)
+  * [Final - Question 3](#final---question-3)
+  * [Final - Question 4](#final---question-4)
+  * [Final - Question 5](#final---question-5)
+  * [Final - Question 6](#final---question-6)
+  * [Final - Question 7](#final---question-7)
 
 
 
-### Aggregation Framework:
+
+### Aggregation Framework
 	
 
    - Pipelines are always an array of one or more stages.
@@ -20,8 +50,8 @@
 
 	  
 
-## Chapter 1: Basic Aggregation - $match and $project
-### Points to remember:
+## Chapter 1 - Basic Aggregation - $match and $project
+### Points to remember
 - **$match:**
 	- A **\$match** stage may contain a **$text** query operator, but it must be the first stage in the pipeline.
 	- -$match should come early in an aggregation pipeline.
@@ -174,9 +204,9 @@ Using the Aggregation Framework, find a count of the number of movies that have 
 
 
 
-## Chapter 2: Basic Aggregation - Utility Stages
+## Chapter 2 - Basic Aggregation - Utility Stages
 
-### Points to remember:
+### Points to remember
 - **$addFields:**
 		- By combining $project with $addFields, we remove the annoyance of explicitly needing to remove or retain fields.
 		- This is a style choice and can prevent having to repeatedly specify which fields to retain in larger pipelines when performing many various calculations.
@@ -333,8 +363,8 @@ MongoDB Enterprise Cluster0-shard-0:PRIMARY> db.movies.aggregate(pipeline,{allow
 ~~~
 Answer: *The Christmas Tree*
 
-## Chapter 3: Core Aggregation - Combining Information
-### Points to remember:
+## Chapter 3 - Core Aggregation - Combining Information
+### Points to remember
 - **$group**
 
 	- _id is where we specify what incoming documents should be 	grouped on.
@@ -556,7 +586,7 @@ MongoDB Enterprise Cluster0-shard-0:PRIMARY> db.air_alliances.aggregate([{
 ~~~
 
 
-## Chapter 4: Core Aggregation - Multidimensional Grouping
+## Chapter 4 - Core Aggregation - Multidimensional Grouping
 - **$facet**
 	-    The  $facet  stage allows several sub-pipelines to be executed to produce multiple facets.
 	-   The  $facet  stage allows the applications to generate several different facets with one single database request.
@@ -642,7 +672,7 @@ MongoDB Enterprise Cluster0-shard-0:PRIMARY> db.movies.aggregate(pipeline,{allow
 
 
 
-## Chapter 5: Miscellaneous Aggregation
+## Chapter 5 - Miscellaneous Aggregation
 
 - **$redact**
 	- **\$\$KEEP** and **$$PRUNE** automatically apply to all levels below evaluated level.
@@ -691,7 +721,7 @@ MongoDB Enterprise Cluster0-shard-0:PRIMARY> db.movies.aggregate(pipeline,{allow
 	
 ## Final Exam
 
-### Final: Question 1
+### Final - Question 1
 
 **Problem:
 Consider the following aggregation pipelines:**
@@ -755,7 +785,7 @@ Check all answers that apply:
 - **Pipeline 3**  fails because  $indexStats  must be the first stage in a pipeline and may not be used within a  $facet
 - **Pipeline 1**  fails since  $out  is required to be the last stage of the pipeline
 
-### Final: Question 2
+### Final - Question 2
 
 **Problem:
 Consider the following collection:**
@@ -803,7 +833,7 @@ db.collection.aggregate([
 - **Pipeline 3**  is correct and will execute with no error
 - **Pipeline 1**  is incorrect because you cannot use an accumulator expression in a  $match  stage.
 
-### Final: Question 3
+### Final - Question 3
 
 **Problem:**
 **Consider the following collection documents:**
@@ -868,7 +898,7 @@ var pipeline = [{
 ~~~
 
 
-### Final: Question 4
+### Final - Question 4
 
 **Problem:
 $facet  is an aggregation stage that allows for sub-pipelines to be executed.**
@@ -912,7 +942,7 @@ Which of the following statements point out errors in the pipeline?**
 - can not nest a  $facet  stage as a sub-pipeline.
 - facet_2  uses the output of a parallel sub-pipeline,  facet_1, to compute an expression
  
-### Final: Question 5
+### Final - Question 5
 
 **Problem:
 Consider a company producing solar panels and looking for the next markets they want to target in the USA. We have a collection with all the major  **cities**  (more than 100,000 inhabitants) from all over the World with recorded number of sunny days for some of the last years.
@@ -985,7 +1015,7 @@ var pipeline = [
 ]
 ~~~
 
-### Final: Question 6
+### Final - Question 6
 
 **Problem:
 Consider the following  **people**  collection:**
@@ -1035,7 +1065,7 @@ var pipeline = [
 db.createView("people_contacts", "people", pipeline);
 ~~~
 
-### Final: Question 7
+### Final - Question 7
 
 **Problem:
 Using the  air_alliances  and  air_routes  collections, find which  *alliance*  has the most unique carriers(airlines) operating between the airports  *JFK*  and  *LHR*, in either directions.

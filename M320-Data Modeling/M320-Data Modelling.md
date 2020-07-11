@@ -1,7 +1,75 @@
-# M320: Data Modeling
-## Chapter 1: Introduction to Data Modelling
-### Important Points
-#### Analogy: RDBMS & MongoDB
+# M320 - Data Modeling
+## Table of Contents
+- [Chapter 1 - Introduction to Data Modelling](#chapter-1---introduction-to-data-modelling)
+  * [Points to Remember](#points-to-remember)
+    + [Analogy - RDBMS & MongoDB](#analogy---rdbms---mongodb)
+    + [Misconceptions](#misconceptions)
+    + [Main aspects of MongoDB](#main-aspects-of-mongodb)
+    + [Document Model in MongoDB](#document-model-in-mongodb)
+      - [Flexibility of schema](#flexibility-of-schema)
+    + [Data modelling Constraints](#data-modelling-constraints)
+      - [Tips for modelling](#tips-for-modelling)
+    + [Documenting Methodology](#documenting-methodology)
+    + [Model for Simplicity or Performance](#model-for-simplicity-or-performance)
+      - [Simplicity](#simplicity)
+      - [Performance](#performance)
+      - [Balanced](#balanced)
+    + [Identifying the Workload](#identifying-the-workload)
+- [Chapter 2 - Relationships](#chapter-2---relationships)
+  * [Points to Remember](#points-to-remember-1)
+    + [Relationships](#relationships)
+    + [Modified Notations](#modified-notations)
+      - [one-to-many](#one-to-many)
+      - [many-to-many](#many-to-many)
+  * [Lab - Many-to-Many Relationship](#lab---many-to-many-relationship)
+      - [one-to-one Relationship](#one-to-one-relationship)
+  * [Lab - One-to-One Relationship](#lab---one-to-one-relationship)
+      - [One-to-Zillion](#one-to-zillion)
+- [Chapter 3 - Patterns (Part-1)](#chapter-3---patterns--part-1-)
+  * [Points to Remember](#points-to-remember-2)
+    + [Duplication](#duplication)
+      - [Case-1 - Where duplicating information is better than not doing it.](#case-1---where-duplicating-information-is-better-than-not-doing-it)
+      - [Case-2 - When the copy data does not ever change.](#case-2---when-the-copy-data-does-not-ever-change)
+      - [Case-3 - Information that needs to or may change with time.](#case-3---information-that-needs-to-or-may-change-with-time)
+    + [Data Staleness](#data-staleness)
+    + [Referential Integrity](#referential-integrity)
+    + [Attribute Pattern](#attribute-pattern)
+  * [Lab - Apply the Attribute Pattern](#lab---apply-the-attribute-pattern)
+    + [Extended Reference Pattern](#extended-reference-pattern)
+    + [Subset Pattern](#subset-pattern)
+  * [Lab - Apply the Subset Pattern](#lab---apply-the-subset-pattern)
+    + [Computed Patterns](#computed-patterns)
+  * [Lab - Apply the Computed Pattern](#lab---apply-the-computed-pattern)
+    + [Bucket Pattern](#bucket-pattern)
+  * [Lab - Apply the Bucket Pattern](#lab---apply-the-bucket-pattern)
+    + [Schema Versioning Pattern](#schema-versioning-pattern)
+  * [Lab - Apply the Schema Versioning Pattern](#lab---apply-the-schema-versioning-pattern)
+    + [Tree Pattern](#tree-pattern)
+  * [Lab - Tree Patterns](#lab---tree-patterns)
+    + [Polymorphic pattern](#polymorphic-pattern)
+  * [Lab - Apply the Polymorphic Pattern](#lab---apply-the-polymorphic-pattern)
+    + [Other Patterns](#other-patterns)
+      - [Approximation Pattern](#approximation-pattern)
+      - [Outlier Pattern](#outlier-pattern)
+    + [Summary of Patterns and potential use cases](#summary-of-patterns-and-potential-use-cases)
+- [Chapter 5 - Conclusion](#chapter-5---conclusion)
+  * [Final Exam - Question 1](#final-exam---question-1)
+  * [Final Exam - Question 2](#final-exam---question-2)
+  * [Final Exam - Question 3](#final-exam---question-3)
+  * [Final Exam - Question 4](#final-exam---question-4)
+  * [Final Exam - Question 5](#final-exam---question-5)
+  * [Final Exam - Question 6](#final-exam---question-6)
+  * [Final Exam - Question 7](#final-exam---question-7)
+  * [Final Exam - Question 8](#final-exam---question-8)
+  * [Final Exam - Question 9](#final-exam---question-9)
+  * [Final Exam - Question 10](#final-exam---question-10)
+  * [Final Exam - Question 11](#final-exam---question-11)
+  * [Final Exam - Question 12](#final-exam---question-12)
+
+
+## Chapter 1 - Introduction to Data Modelling
+### Points to Remember
+#### Analogy - RDBMS & MongoDB
 *RDBMS* 		| *MongoDB*
 -----------	| -----------
 Entity			| Entity
@@ -36,7 +104,7 @@ Database | Database
 	- Language independent.
 - You can keep your related data in a single document and pull it all down using a single query.
 - MongoDB document is similar to a dictionary, map or an associative array.
-##### Flexibility of schema:
+##### Flexibility of schema
 - Documents in the same collection don't need to have the exact same list of fields.
 
 - Furthermore, the data type in any given field can vary across documents.
@@ -106,8 +174,8 @@ CASE STUDY
 - These differences you observe are needed to adapt the schema design.
 - It is likely that a few CRUD operations will drive your design.
 
-## Chapter 2: Relationships
-### Important Points
+## Chapter 2 - Relationships
+### Points to Remember
 #### Relationships
 - Common Relationships:
 	- one-to-one		(1-1)	(Customer - Customer_id)
@@ -165,7 +233,7 @@ CASE STUDY
 - Prefer embedding for information that is primarily static over time and may benefit from duplication.
 - Prefer referencing over embedding to avoid managing duplication.
 
-### Lab: Many-to-Many Relationship
+### Lab - Many-to-Many Relationship
 
 **Problem:
 Given the following Collection Relationship Diagram (CRD), identify the relationships that represent Many-to-Many relationships.
@@ -193,7 +261,7 @@ We are asking you to identify not only direct Many-to-Many relationships, but al
 <a href="https://ibb.co/2hf9KvZ"><img src="https://i.ibb.co/nm5Gk7P/Screenshot-53.png" alt="One-to-one: reference" border="0"></a>
 <a href="https://ibb.co/jTRpZJC"><img src="https://i.ibb.co/s2HBJWT/Screenshot-55.png" alt="Recap" border="0"></a>
 
-### Lab: One-to-One Relationship
+### Lab - One-to-One Relationship
 
 **Problem:
 A legacy database has been ported to MongoDB, resulting in a set of collections that were mapped to their original tables. This port has been quickly identified as a poor solution.
@@ -232,8 +300,8 @@ Once you've identified the ideal design, you can deepen your knowledge by trying
 <a href="https://ibb.co/rkt9FmJ"><img src="https://i.ibb.co/K6GnbXH/Screenshot-59.png" alt="Recap" border="0"></a>
 
 
-## Chapter 3: Patterns (Part-1)
-### Important Points
+## Chapter 3 - Patterns (Part-1)
+### Points to Remember
 - Concerns with applying Patterns:
 	- Duplication
 		- duplicating data across documents
@@ -247,7 +315,7 @@ Once you've identified the ideal design, you can deepen your knowledge by trying
 	- Result of embedding information in a given document for faster access
 - Concern
 	- Challenge for correctness and consistency
-##### Case-1: Where duplicating information is better than not doing it.
+##### Case-1 - Where duplicating information is better than not doing it.
 	
 - Let's link orders of products to the address of the customer that placed the order by using a reference to a customer document.
 - Updating the address for this customer updates information for the already fulfilled shipments, order that have been already delivered to the customer. This is not the desired behavior.
@@ -256,7 +324,7 @@ Once you've identified the ideal design, you can deepen your knowledge by trying
 - Embedding a copy of the address within the shipment document will ensure we keep the correct value.
 - When the customer moves, we add another shipping address on file.
 - Using this new address for new orders, does not affect the already shipped orders. 
-##### Case-2: When the copy data does not ever change.
+##### Case-2 - When the copy data does not ever change.
 
 - Let's say we want to model movies and actors.
 - Movies have many actors and actors play in many movies.
@@ -266,7 +334,7 @@ Once you've identified the ideal design, you can deepen your knowledge by trying
 - However, once the movie is released, the list of actors does not change.
 - So duplication on this unchanging information is also perfectly acceptable. 
 
-#####  Case-3: Information that needs to or may change with time.
+#####  Case-3 - Information that needs to or may change with time.
 
 - Let's use the revenues for a given movie, which is stored within the movie, and the revenues earned per screening.
 - Oh, yeah, with said duplication add to be a single value in two locations.
@@ -319,7 +387,7 @@ For this case you want to use the attribute pattern.
 <a href="https://ibb.co/MS328FJ"><img src="https://i.ibb.co/DWSVG0j/Screenshot-61.png" alt="Attribute Pattern" border="0"></a>
 
 
-### Lab: Apply the Attribute Pattern
+### Lab - Apply the Attribute Pattern
 
 **Problem:
 	User Story:
@@ -431,7 +499,7 @@ When you get the validation code, paste it in the text box below and click the s
 <a href="https://ibb.co/vk5F1DJ"><img src="https://i.ibb.co/kXn7KMh/Screenshot-69.png" alt="Subset Pattern Recap" border="0"></a>
 
 
-### Lab: Apply the Subset Pattern
+### Lab - Apply the Subset Pattern
 **Problem:
 You are the lead developer for an online organic recycled clothing store. Consider the following user story:**
 
@@ -633,7 +701,7 @@ When you get the validation code, paste it in the text box below and click submi
 
 <a href="https://ibb.co/qWhC6gr"><img src="https://i.ibb.co/SdHcSm3/Screenshot-71.png" alt="Computed Pattern" border="0"></a>
 
-### Lab: Apply the Computed Pattern
+### Lab - Apply the Computed Pattern
 
 **Problem:
 User Story
@@ -764,7 +832,7 @@ When you get the validation code paste it in the text box below and click submit
 - Summary
 					- <a href="https://ibb.co/NCx3hDF"><img 		src="https://i.ibb.co/8sMB3vm/Screenshot-75.png" alt="Bucket Pattern" border="0"></a>
 	
-### Lab: Apply the Bucket Pattern
+### Lab - Apply the Bucket Pattern
 
 **Problem:
 In this lab, we will be applying the Bucket Pattern to address an IoT use case scenario.
@@ -1016,7 +1084,7 @@ One document per day:
 - <a href="https://ibb.co/HG8mxgf"><img src="https://i.ibb.co/CVGxM03/Screenshot-77.png" alt="Application Lifecycle" border="0"></a>
 - <a href="https://ibb.co/Q8TJSZk"><img src="https://i.ibb.co/M8tgwbf/Screenshot-79.png" alt="Schema Versioning Pattern" border="0"></a>
 
-### Lab: Apply the Schema Versioning Pattern
+### Lab - Apply the Schema Versioning Pattern
 
 **Problem:
 Which of the following scenarios are best suited for applying the Schema Versioning Pattern?**
@@ -1058,7 +1126,7 @@ Check all answers that apply:**
 -	<a href="https://ibb.co/cCpm2x0"><img src="https://i.ibb.co/VQhKM3R/Screenshot-85.png" alt="Tree pattern" border="0"></a>
 
 
-### Lab: Tree Patterns
+### Lab - Tree Patterns
 
 **Problem:
 In this lab, you will be selecting a variant of the  _Tree Pattern_  to improve the performance of a common set of operations for a given application.**
@@ -1177,7 +1245,7 @@ This application needs to be able to map a corporate reporting structure, an org
 - <a href="https://ibb.co/xjkPhmb"><img src="https://i.ibb.co/9TDznw0/Screenshot-86.png" alt="Polymorphic Pattern" border="0"></a>
 
 
-### Lab: Apply the Polymorphic Pattern
+### Lab - Apply the Polymorphic Pattern
 
 **Problem:**
 
@@ -1424,8 +1492,8 @@ Enter answer here:**
 - More predictable Methodology.
 - <a href="https://ibb.co/TY5Bg33"><img src="https://i.ibb.co/CmF5HGG/Annotation-2020-05-25-222636.png" alt="patterns use cases" border="0"></a>
 
-## Chapter 5: Conclusion
-### Final Exam: Question 1
+## Chapter 5 - Conclusion
+### Final Exam - Question 1
 
 **Problem:
 **Scenario**
@@ -1471,7 +1539,7 @@ Consider the following information about the operations on a system:**
 *Answer:*
 - R2 - user views a specific item.
 
-### Final Exam: Question 2
+### Final Exam - Question 2
 
 **Problem:
 **Scenario**
@@ -1504,7 +1572,7 @@ To simplify the calculations and conversions in data units, use:**
 - The size of the data in the database is 530 terabytes.
 - The peak write rate is 830,000 writes/second.
 - The average write rate is 170,000 writes/second.
-### Final Exam: Question 3
+### Final Exam - Question 3
 
 **Problem:
 Given the following  _Collection Entity Diagram_.**
@@ -1529,7 +1597,7 @@ Given the following  _Collection Entity Diagram_.**
 - stores.name  and  stores.city
 
 
-### Final Exam: Question 4
+### Final Exam - Question 4
 
 **Problem:
 We are building a social media site where users can share a lot of details about their whereabouts in their lives.
@@ -1553,7 +1621,7 @@ Which one of the following implementations would be the preferred way to represe
 ![https://university-courses.s3.amazonaws.com/M320/m320-final-one-to-many-1.png](https://university-courses.s3.amazonaws.com/M320/m320-final-one-to-many-1.png)
 
 
-### Final Exam: Question 5
+### Final Exam - Question 5
 
 **Problem:
 Which of the following are recommended ways to model a Many-to-Many relationship between airlines and the cities those airlines fly between?**
@@ -1576,7 +1644,7 @@ Which of the following are recommended ways to model a Many-to-Many relationship
 ![https://university-courses.s3.amazonaws.com/M320/m320-final-many-to-many-1.png](https://university-courses.s3.amazonaws.com/M320/m320-final-many-to-many-1.png)
 
 
-### Final Exam: Question 6
+### Final Exam - Question 6
 
 **Problem:
 Consider a system that collects census data on all countries in the world.
@@ -1600,7 +1668,7 @@ Which of the following implementations are recommended ways to model a One-to-Zi
 
 
 
-### Final Exam: Question 7
+### Final Exam - Question 7
 
 **Problem:
 **Scenario**
@@ -1622,7 +1690,7 @@ Which pattern solution is best suited for this situation?**
 
 
 
-### Final Exam: Question 8
+### Final Exam - Question 8
 
 **Problem:
 **Scenario**
@@ -1643,7 +1711,7 @@ A new decision maker came aboard your online bookstore team. They want to be abl
 
 
 
-### Final Exam: Question 9
+### Final Exam - Question 9
 
 **Problem:
 **Scenario**
@@ -1663,7 +1731,7 @@ Which pattern solution is best suited for this situation?**
 
 
 
-### Final Exam: Question 10
+### Final Exam - Question 10
 
 **Problem:
 **Scenario**
@@ -1682,7 +1750,7 @@ Which pattern solution is best suited for this application?**
 - The Polymorphic Pattern
 
 
-### Final Exam: Question 11
+### Final Exam - Question 11
 
 **Problem:
 **Scenario**
@@ -1703,7 +1771,7 @@ Which pattern solution is best suited for this situation?**
 
 
 
-### Final Exam: Question 12
+### Final Exam - Question 12
 
 **Problem:
 **Scenario**

@@ -1,37 +1,36 @@
 # M103 - Basic Cluster Administration
-
-# Table of Contents:
-- [Chapter 0:  Introduction & Setup](#chapter-0---introduction---setup)
-- [Chapter 1: The Mongod](#chapter-1--the-mongod)
+- [Chapter 0 - Introduction & Setup](#chapter-0---introduction---setup)
+- [Chapter 1 - The Mongod](#chapter-1---the-mongod)
   * [Lab - Launching Mongod](#lab---launching-mongod)
   * [Lab - Configuration File](#lab---configuration-file)
   * [Lab - Change the Default DB Path](#lab---change-the-default-db-path)
   * [Lab - Logging to a Different Facility](#lab---logging-to-a-different-facility)
   * [Lab - Creating First Application User](#lab---creating-first-application-user)
   * [Lab - Importing a Dataset](#lab---importing-a-dataset)
-- [Chapter 2: Replication](#chapter-2--replication)
+- [Chapter 2 - Replication](#chapter-2---replication)
   * [Lab - Initiate a Replica Set Locally](#lab---initiate-a-replica-set-locally)
   * [Lab - Remove and Re-Add a Node](#lab---remove-and-re-add-a-node)
   * [Lab - Writes with Failovers](#lab---writes-with-failovers)
   * [Lab - Read Preferences](#lab---read-preferences)
-- [Chapter 3: Sharding](#chapter-3--sharding)
+- [Chapter 3 - Sharding](#chapter-3---sharding)
   * [Lab - Configure a Sharded Cluster](#lab---configure-a-sharded-cluster)
   * [Lab - Shard a Collection](#lab---shard-a-collection)
   * [Lab - Documents in Chunks](#lab---documents-in-chunks)
-  * [Lab: Detect Scatter Gather Queries](#lab--detect-scatter-gather-queries)
+  * [Lab - Detect Scatter Gather Queries](#lab---detect-scatter-gather-queries)
 - [Final Exam](#final-exam)
-  * [Final: Question 1](#final--question-1)
-  * [Final: Question 2](#final--question-2)
-  * [Final: Question 3](#final--question-3)
-  * [Final: Question 4](#final--question-4)
-  * [Final: Question 5](#final--question-5)
-  * [Final Question  6](#final-question--6)
+  * [Final - Question 1](#final---question-1)
+  * [Final - Question 2](#final---question-2)
+  * [Final - Question 3](#final---question-3)
+  * [Final - Question 4](#final---question-4)
+  * [Final - Question 5](#final---question-5)
+  * [Final - Question 6](#final---question-6)
+
 
 **Working directory:**
 
     C:\Users\harsh\m103\m103-vagrant-env
 
-## Chapter 0:  Introduction & Setup
+## Chapter 0 - Introduction & Setup
 
 
     $ vagrant ssh
@@ -40,7 +39,7 @@
 > *OutputValidationKey*
 
 
-## Chapter 1: The Mongod
+## Chapter 1 - The Mongod
 
     $ mongod --dbpath /data/db/ --port 27000 --bind_ip "127.0.0.1,192.168.103.100" --auth
     
@@ -203,7 +202,7 @@
 
 
 
-## Chapter 2: Replication
+## Chapter 2 - Replication
 
 ### Lab - Initiate a Replica Set Locally
 ----------------------------
@@ -329,7 +328,7 @@ Which of these  readPreferences  will allow you to read data from this node?**
 *Incorrect*
 1. primary
 -------------
-## Chapter 3: Sharding
+## Chapter 3 - Sharding
 ### Lab - Configure a Sharded Cluster
 **1. Bring up the config server replica set (CSRS)**
   
@@ -569,7 +568,7 @@ Append the below configuration options to the replicaset config files:
       }
     }
 
-###  Lab: Detect Scatter Gather Queries
+###  Lab - Detect Scatter Gather Queries
 
 **Problem: Which of the following is  required  in order for a query to be targeted to a subset of shards?**
 **Check all answers that apply:**
@@ -585,7 +584,7 @@ Append the below configuration options to the replicaset config files:
 
 ## Final Exam
 
-### Final: Question 1  
+### Final - Question 1  
 
 **Problem: Which of the following are valid command line instructions to start a mongod? You may assume that all specified files already exist.**  
   
@@ -599,7 +598,7 @@ Append the below configuration options to the replicaset config files:
   
 ----------------------------------------------------------  
   
-### Final: Question 2  
+### Final - Question 2  
 
 **Problem: Given the following config file: How many directories must MongoDB have access to? Disregard the path to the configuration file itself.**
   
@@ -627,7 +626,7 @@ Append the below configuration options to the replicaset config files:
   
 ------------------------------------------------------------  
   
-### Final: Question 3  
+### Final - Question 3  
 
   
 **Problem: Given the following output from rs.status().members:**  
@@ -803,7 +802,7 @@ Append the below configuration options to the replicaset config files:
 3. 7  
   
 ------------------------------------------------------------  
-### Final: Question 4  
+### Final - Question 4  
 
   
 **Problem: Given the following replica set configuration:**  
@@ -848,7 +847,7 @@ Append the below configuration options to the replicaset config files:
 2. you cannot have three members in a replica set.  
   
 -------------------------------------------------------------------------------------  
-### Final: Question 5  
+### Final - Question 5  
   
   
 **Problem: Given the following replica set configuration:**  
@@ -900,7 +899,7 @@ Append the below configuration options to the replicaset config files:
 3. It serves as a hidden secondary available to use for non-critical analysis operations  
   
 ------------------------------------------------------------------------
-### Final Question  6
+### Final - Question 6
 **Problem: Given the following shard key:**
 
     { "country": 1, "_id": 1 }
